@@ -7,7 +7,7 @@ bool g_bPaused = false;
 PlaybackManager * g_pPlaybackManager = nullptr;
 
 // From MM11.h
-oXInputGetState original_XInputGetState = (oXInputGetState)(*(unsigned long long*)XINPUT_IAT_ADDRESS);
+oXInputGetState original_XInputGetState = (oXInputGetState)(0x0);////(oXInputGetState)(*(unsigned long long*)XINPUT_IAT_ADDRESS);
 
 // From MM11.h
 unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE* pInputState)
@@ -21,6 +21,9 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 		bOnce = true;
 	}
 
+	if (!pInputState)
+		return ERROR_SUCCESS;
+
 	auto * p = &pInputState->Gamepad;
 
 	if (g_pPlaybackManager)
@@ -29,10 +32,28 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 		{
 			g_pPlaybackManager->DoPlayback(false, pInputState);
 			g_bPlaybackSync = false;
+
+			//DebugOutput("DoPlayback success, returning.");
+			return ERROR_SUCCESS;
+		}
+		else
+		{
+			if (!pInputState)
+				return ERROR_SUCCESS;
+
+			DWORD dwOldProt;
+			VirtualProtect((LPVOID)&original_XInputGetState, 0x8, PAGE_EXECUTE_READWRITE, &dwOldProt);
+
+			if (*(unsigned long long*)(original_XInputGetState) == 0x0)
+				return ERROR_SUCCESS;
+
+			//DebugOutput("Returning original XInputGetState, not playing back or playbackSync is false.");
+			return original_XInputGetState(dwUserIndex, pInputState);
 		}
 	}
 
-	return ERROR_SUCCESS;
+	//DebugOutput("No playback at all..");
+	return original_XInputGetState(dwUserIndex, pInputState);
 }
 
 
@@ -45,6 +66,9 @@ unsigned long WINAPI XInputGetCapabilities_Hook(unsigned long dwUserIndex, unsig
 		bOnce = true;
 
 	}
+
+	if (!pCaps)
+		return ERROR_SUCCESS;
 
 	// Null flags
 	pCaps->Flags ^= pCaps->Flags;
@@ -265,6 +289,13 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 	{
 		return;
 	}
+
+	if (!pxInpState)
+	{
+		DebugOutput("Null input state in DoPlayback??? ! ?");
+		return;
+	}
+
 
 	if (this->m_InputIndex < this->m_Inputs.size())
 	{

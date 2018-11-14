@@ -282,6 +282,8 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 			// Null the gamepad state if we we were on a 1 frame input, or the last frame of an input.
 			memset(&g_pPlaybackManager->GetXInputState()->Gamepad, 0, sizeof(XINPUT_GAMEPAD));
 		}
+
+
 	}
 
 }
@@ -303,6 +305,10 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 		g_pVtable[6] = (unsigned long long)GameLoop_Hook;
 
 		DebugOutput("Hooked GameLoop via vtable.");
+
+		*(unsigned long long*)(&original_XInputGetState) = (unsigned long long) GetProcAddress(GetModuleHandle(L"xinput1_3.dll"), "XInputGetState");
+
+		DebugOutput("Original XInputGetState = %llx", (unsigned long long)original_XInputGetState);
 	}
 
 	//HookDirectInputMethods();
