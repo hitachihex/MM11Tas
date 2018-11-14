@@ -25,7 +25,7 @@ Note: Game speed is engine delta time, so it won't work very well with playback 
 Commands read from input file are in the format of:
    frames, Action
    
-Accepted commands are:
+Accepted commands are: <br />
     Left <br />
     Right <br />
     Up <br />
