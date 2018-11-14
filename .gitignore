@@ -3,3 +3,18 @@
 ################################################################################
 
 *.ipch
+*.db
+*.opendb
+*.db-shm
+*.db-wal
+*.sqlite
+*.json
+*.tlog
+*.obj
+*.log
+*.pdb
+*.pch
+*.iobj
+*.ipdb
+*.lib
+*.exp

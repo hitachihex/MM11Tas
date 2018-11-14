@@ -8,6 +8,12 @@
 #include <map>
 #include <Xinput.h>
 
+// Input state bitflags.
+
+
+//asd 
+//asd
+//asd
 enum EInputState
 {
 	// for null frames
