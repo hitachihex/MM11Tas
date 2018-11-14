@@ -26,21 +26,21 @@ Commands read from input file are in the format of:
    frames, Action
    
 Accepted commands are:
-    Left
-    Right
-    Up
-    Down
-    Start
-    Select
-    Jump
-    RushCoil
-    RushJet
-    Shoot
-    WSelect -  (for quick weapon select, must be enabled in-game in controls) , 
-            accepts a sub command for weapons which can be:
-            Block, Acid, Blast, Fuse, Bounce, Torch, Impact, Tundra
-    PGear - (for power gear)
-    SGear - (for speed gear)
+    Left <br />
+    Right <br />
+    Up <br />
+    Down <br />
+    Start <br />
+    Select <br />
+    Jump <br />
+    RushCoil <br />
+    RushJet <br />
+    Shoot <br />
+    WSelect -  (for quick weapon select, must be enabled in-game in controls) ,  <br />
+            accepts a sub command for weapons which can be: <br />
+            Block, Acid, Blast, Fuse, Bounce, Torch, Impact, Tundra <br />
+    PGear - (for power gear) <br />
+    SGear - (for speed gear) <br />
 
 
 
