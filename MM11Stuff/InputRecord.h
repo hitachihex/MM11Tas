@@ -50,14 +50,14 @@ typedef struct t_InputRecord
 	unsigned int m_nLineNo;
 
 	std::map<std::string, std::pair<signed short, signed short>> m_WeaponSelectMapping = {
-		{"Block", std::make_pair(-1*32000, 1*32000)},
-		{"Acid",  std::make_pair(0, 1*32000)},
-		{"Blast", std::make_pair(1*32000, 1*32000)},
-		{"Fuse",  std::make_pair(-1*32000, 0)},
-	    {"Bounce", std::make_pair(1*32000, 0)},
-	    {"Torch", std::make_pair(-1*32000, -1*32000)},
-	    {"Impact", std::make_pair(0, -1*32000)},
-	    {"Tundra", std::make_pair(1*32000, -1*32000)}
+		{"Block", std::make_pair(-1*32768, 1*32767)},
+		{"Acid",  std::make_pair(0, 1*32767)},
+		{"Blast", std::make_pair(1* 32767, 1* 32767)},
+		{"Fuse",  std::make_pair(-1* 32768, 0)},
+	    {"Bounce", std::make_pair(1* 32767, 0)},
+	    {"Torch", std::make_pair(-1* 32768, -1* 32768)},
+	    {"Impact", std::make_pair(0, -1* 32768)},
+	    {"Tundra", std::make_pair(1* 32767, -1* 32768)}
 	};
 
 	std::pair<signed short, signed short> m_WeaponSelectDir;
