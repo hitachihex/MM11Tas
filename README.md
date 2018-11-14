@@ -1,6 +1,8 @@
 # MM11Tas
 Incredibly basic TAS tool for Megaman 11 for the PC.
 
+To use the tool, run MM1Injector.exe after running the game executable, make sure MM11Stuff.dll is in the same directory as the executable. You will need to run the injector (and possibly the game) as administrator.
+
 Hotkeys aren't configurable, input file is created for you if it does not exist.
 
 In the directory where the game executable is, you can create it however if you want, it looks for megaman.rec.
