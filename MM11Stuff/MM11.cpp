@@ -217,7 +217,10 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		{
 			DebugOutput("Starting playback.");
 			g_pPlaybackManager->InitPlayback(false);
+			DebugOutput("InitPlayback success.");
 			g_bPlaybackSync = true;
+
+			DebugOutput("Toggled g_bPlaybackSync.");
 		}
 	}
 
@@ -276,15 +279,21 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 
 	if (g_pPlaybackManager->IsPlayingBack())
 	{
+		DebugOutput("GameLoop_Hook : We are playing back.");
 		InputRecord * pCurrentInput = g_pPlaybackManager->GetCurrentInput();
+		DebugOutput("GameLoop_Hook got current input from playbackManager.");
 		if (pCurrentInput->m_Frames == 1 || (pCurrentInput->m_Done == pCurrentInput->m_Frames))
 		{
+			DebugOutput("Frames are 1, or inputRecord is done, about to null GamePad state.");
 			// Null the gamepad state if we we were on a 1 frame input, or the last frame of an input.
 			memset(&g_pPlaybackManager->GetXInputState()->Gamepad, 0, sizeof(XINPUT_GAMEPAD));
+			DebugOutput("Nulled gamePad state.");
 		}
 
 
 	}
+
+	DebugOutput("Leaving GameLoop_Hook");
 
 }
 

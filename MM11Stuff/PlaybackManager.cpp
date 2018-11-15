@@ -139,15 +139,21 @@ bool PlaybackManager::ReadInputFile()
 	char LineBuffer[2048] = { 0 };
 	unsigned int linecount = 0;
 
+	DebugOutput("Hi, from ReadInputFile.");
+
 	if (this->m_Fp == nullptr)
 	{
 		DebugOutput("No input file handle.");
 		return false;
 	}
 
+	DebugOutput("About to rewind file handle.");
 	rewind(this->m_Fp);
+	DebugOutput("Rewound file handle.");
+
 	this->m_Inputs.clear();
 
+	DebugOutput("Cleared input records vector.");
 
 	while (true)
 	{
@@ -192,12 +198,18 @@ bool PlaybackManager::ReadInputFile()
 		}*/
 
 
+		DebugOutput("About to call InputRecord ctor.");
 		InputRecord * p = new InputRecord(std::string(LineBuffer), ++linecount);
+		DebugOutput("Called InputRecord ctor.");
+
 		this->m_nTotalFrameCount += p->m_Frames;
 		this->m_Inputs.push_back(p);
 
+		DebugOutput("Pushed back an input record into vector.");
 		memset(LineBuffer, 0, sizeof(LineBuffer) / sizeof(LineBuffer[0]));
 	}
+
+	DebugOutput("Leaving ReadInputFile.");
 
 	return true;
 }
@@ -213,13 +225,19 @@ void PlaybackManager::InitPlayback(bool bReload = true)
 	this->m_WalktoLineNo = -1;
 	this->m_nTotalFrameCount = 0;
 
+	DebugOutput("Done setting default variables.");
+
 	if (this->m_bPlayingBack && bReload)
 	{
 		this->m_bPlayingBack = false;
 		return;
 	}
+	
+	DebugOutput("Done checking for playing back and reload, to stop playback.");
 
 	bool result = this->ReadInputFile();
+
+	DebugOutput("InitPlayback - ReadInputFile returned.");
 
 	if (!result)
 	{
@@ -227,11 +245,15 @@ void PlaybackManager::InitPlayback(bool bReload = true)
 		return;
 	}
 	
+	DebugOutput("Done checking result status.");
+	
 
 	this->m_bPlayingBack = true;
 
 	this->m_CurrentFrame = 0;
 	this->m_InputIndex = 0;
+
+	DebugOutput("Set default vars for index and currentFrame.");
 
 	if (this->m_Inputs.size() > 0)
 	{
@@ -247,6 +269,8 @@ void PlaybackManager::InitPlayback(bool bReload = true)
 		this->m_bPlayingBack = false;
 		return;
 	}
+
+	DebugOutput("Going to return from InitPlayback now.");
 
 }
 
@@ -299,7 +323,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		return;
 	}
 
-
+	DebugOutput("DoPlayback, checked playingBack and inputState for correctness.");
 	if (this->m_InputIndex < this->m_Inputs.size())
 	{
 		if (wasFramestepped)
@@ -335,7 +359,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 
 						// Disable playback
 						this->m_bPlayingBack = false;
-						//DebugOutput("Index+1 > input size");
+						DebugOutput("Index+1 > inputSize, playback done.");
 
 						return;
 					}
@@ -384,14 +408,21 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		//  Increase current frame.
 		this->m_CurrentFrame++;
 
+		DebugOutput("DoPlayback - Increase currentFrame.");
+
 		// Set our pointer to the one from the GetState hook.
 		this->m_pGamePadState = pxInpState;
+
+		DebugOutput("DoPlayback - Set GamePadState pointer to argument in function call.");
 
 		// Set the pad state to the input record state.
 		m_pCurrentInput->GetRecordState(pxInpState);
 
+		DebugOutput("DoPlayback - m_pCurrentInput->GetRecordState returned succesfully.");
 		// Packet number is our current frame.
 		pxInpState->dwPacketNumber = this->m_CurrentFrame;
+
+		DebugOutput("DoPlayback - Set packet number to the currentFrame.");
 	}
 
 
