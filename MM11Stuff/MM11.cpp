@@ -244,8 +244,16 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		if (g_pPlaybackManager)
 		{
 			DebugOutput("Starting playback.");
-			g_pPlaybackManager->InitPlayback(false);
-			g_bPlaybackSync = true;
+			if (g_pPlaybackManager->IsPlayingBack())
+			{
+				g_bPlaybackSync = false;
+				g_pPlaybackManager->InitPlayback(true);
+			}
+			else
+			{
+				g_pPlaybackManager->InitPlayback(false);
+				g_bPlaybackSync = true;
+			}
 		}
 	}
 

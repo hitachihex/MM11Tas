@@ -360,7 +360,7 @@ __declspec(noinline) void PlaybackManager::DoPlayback(bool wasFramestepped, XINP
 
 						// disable playback
 						this->m_bPlayingBack = false;
-						//DebugOutput("Index+1 > ReloadedScope");
+						DebugOutput("Playback finished because index + 1 > reloaded scope.");
 
 						return;
 					}
@@ -373,7 +373,7 @@ __declspec(noinline) void PlaybackManager::DoPlayback(bool wasFramestepped, XINP
 
 						// Disable playback
 						this->m_bPlayingBack = false;
-						//DebugOutput("Index+1 > input size");
+						DebugOutput("Playback finished because index+1 > inputs.size");
 
 						return;
 					}
