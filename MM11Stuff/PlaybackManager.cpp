@@ -8,6 +8,7 @@ PlaybackManager * g_pPlaybackManager = nullptr;
 
 // From MM11.h
 oXInputGetState original_XInputGetState = (oXInputGetState)(0x0);////(oXInputGetState)(*(unsigned long long*)XINPUT_IAT_ADDRESS);
+oXInputGetCapabilities original_XInputGetCapabilities = (oXInputGetCapabilities)(0x0);
 
 // From MM11.h
 unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE* pInputState)
@@ -75,9 +76,40 @@ unsigned long WINAPI XInputGetCapabilities_Hook(unsigned long dwUserIndex, unsig
 
 	}
 
-	if (!pCaps)
-		return ERROR_SUCCESS;
+	//static u64 originalGetCapsAddress = 0x0; GetProcAddress(GetModuleHandle("xinput1_3.dll"), "XInputGetCapabilities");
+	static HMODULE xinputHandle = NULL; 
+	static u64 originalGetCapsAddress = 0x0;
+	if (xinputHandle == NULL || originalGetCapsAddress == 0x0)
+	{
 
+		xinputHandle = GetModuleHandle(L"xinput1_3.dll");
+		if (xinputHandle == NULL)
+		{
+			DebugOutput("What, xinputHandle is NULL but it's calling it? Lol.");
+			return ERROR_DEVICE_NOT_CONNECTED;
+		}
+
+		originalGetCapsAddress = (unsigned long long)GetProcAddress(xinputHandle, "XInputGetCapabilities");
+		if (originalGetCapsAddress == NULL)
+		{
+			DebugOutput("What, originalGetCapsAddress is NULL but it's calling it? Lol.");
+			return ERROR_DEVICE_NOT_CONNECTED;
+		}
+
+		*(u64*)(&original_XInputGetCapabilities) = originalGetCapsAddress;
+
+		DebugOutput("Original XInputGetCaps=%llx", originalGetCapsAddress);
+		return original_XInputGetCapabilities(dwUserIndex, dwFlags, pCaps);
+	}
+
+	return original_XInputGetCapabilities(dwUserIndex, dwFlags, pCaps);
+
+
+	//return original_XInputGetCapabilities
+	if (!pCaps)
+		return ERROR_DEVICE_NOT_CONNECTED;
+
+	/*
 	// Null flags
 	pCaps->Flags ^= pCaps->Flags;
 
@@ -111,9 +143,9 @@ unsigned long WINAPI XInputGetCapabilities_Hook(unsigned long dwUserIndex, unsig
 	pCaps->Gamepad.sThumbLX = SHRT_MAX;
 	pCaps->Gamepad.sThumbLY = SHRT_MAX;
 	pCaps->Gamepad.sThumbRX = SHRT_MAX;
-	pCaps->Gamepad.sThumbRY = SHRT_MAX;
+	pCaps->Gamepad.sThumbRY = SHRT_MAX;*/
 
-	return ERROR_SUCCESS;
+	return ERROR_DEVICE_NOT_CONNECTED;
 }
 
 

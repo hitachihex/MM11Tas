@@ -42,6 +42,9 @@ extern oXInputGetState original_XInputGetState;
 extern unsigned long WINAPI XInputGetState_Hook(unsigned long, XINPUT_STATE*);
 extern unsigned long WINAPI XInputGetCapabilities_Hook(unsigned long, unsigned long, XINPUT_CAPABILITIES*);
 
+typedef unsigned long(WINAPI * oXInputGetCapabilities)(unsigned long, unsigned long, XINPUT_CAPABILITIES*);
+extern oXInputGetCapabilities original_XInputGetCapabilities;
+
 extern unsigned long long * g_pXInputGetState_IAT;
 
 extern void __fastcall KeyboardUpdate_Hook(unsigned long long, unsigned long long);
