@@ -7,6 +7,7 @@
 #include "Utils.h"
 #include <map>
 #include <Xinput.h>
+#include <cctype>
 
 // Input state bitflags.
 
@@ -107,6 +108,10 @@ typedef struct t_InputRecord
 		if (this->IsShoot())
 			result += ",Shoot";
 
+		if (this->IsBuster())
+			result += ",Buster";
+
+
 		return result;
 
 	}
@@ -152,10 +157,9 @@ typedef struct t_InputRecord
 		if (this->IsRushJet())
 			pad->wButtons |= XINPUT_GAMEPAD_B;
 
-		if (this->IsRushJet())
-		{
-
-		}
+		// Added buster.
+		if (this->IsBuster())
+			pad->wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
 
 		if (this->IsWeaponSelect())
 		{
@@ -356,8 +360,15 @@ typedef struct t_InputRecord
 				}
 				else if (token == "WSELECT")
 				{
-					TempState |= EInputState::WEAPON_SELECT;
 					std::string weaponName = tokens[i + 1];
+					// Special case. don't set it as weapon select, set it as buster.
+					if (weaponName == "Buster" || weaponName == "BUSTER")
+					{
+						TempState |= EInputState::BUSTER;
+						continue;
+					}
+
+					TempState |= EInputState::WEAPON_SELECT;
 					this->m_WeaponSelectDir = this->m_WeaponSelectMapping[weaponName];
 					continue;
 				}
