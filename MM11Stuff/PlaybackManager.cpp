@@ -323,7 +323,8 @@ unsigned long PlaybackManager::GetCurrentInputIndex()
 }
 
 
-void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
+#pragma optimize("", off)
+__declspec(noinline) void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 {
 	if (!this->m_bPlayingBack)
 	{
@@ -434,6 +435,8 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 
 	return;
 }
+#pragma optimize("", on)
+
 
 InputRecord * PlaybackManager::GetCurrentInput()
 {
