@@ -287,12 +287,14 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 			DebugOutput("Frames are 1, or inputRecord is done, about to null GamePad state.");
 			// Null the gamepad state if we we were on a 1 frame input, or the last frame of an input.
 			auto gpState = &g_pPlaybackManager->GetXInputState()->Gamepad;
+			DebugOutput("gpState acquired GetXInputState()->GamePad as reference.");
 			if (gpState == nullptr)
 			{
 				DebugOutput("How is our GamePad null??!??!!?");
 			}
 			else
 			{
+				DebugOutput("It's not null? It's this: %p", gpState);
 				memset(&g_pPlaybackManager->GetXInputState()->Gamepad, 0, sizeof(XINPUT_GAMEPAD));
 				DebugOutput("Nulled gamePad state.");
 			}
