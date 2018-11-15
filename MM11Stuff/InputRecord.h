@@ -7,6 +7,7 @@
 #include "Utils.h"
 #include <map>
 #include <Xinput.h>
+#include <cctype>
 
 // Input state bitflags.
 
@@ -270,6 +271,8 @@ typedef struct t_InputRecord
 
 		unsigned int TempState = EInputState::DEFAULT_NONE;
 
+
+		// if(token[0
 		// Make sure we don't have JUST framecount (null or empty inputs)
 		if (tokens.size() > 1 && delimited != std::string::npos)
 		{
@@ -282,7 +285,28 @@ typedef struct t_InputRecord
 					continue;
 
 				auto negativelamb = [](char& ch) { ch = toupper((unsigned char)ch); };
+
+				// Uppercase everything.
 				std::for_each(token.begin(), token.end(), negativelamb);
+
+				auto lhstrim = [](std::string& in)
+				{
+					//lambception
+					auto iter = std::find_if(in.begin(), in.end(), [](char ch) { return !std::isspace((unsigned char)ch); });
+					in.erase(in.begin(), iter);
+					return in;
+				};
+
+				auto rhstrim = [](std::string& in)
+				{
+					auto iter2 = std::find_if(in.rbegin(), in.rend(), [](char ch) { return !std::isspace((unsigned char)ch); });
+					in.erase(iter2.base(), in.end());
+					return in;
+				};
+
+				// Remove the leading and trailing spaces.
+				token = lhstrim(token);
+				token = rhstrim(token);
 
 				if (token == "LEFT")
 				{
