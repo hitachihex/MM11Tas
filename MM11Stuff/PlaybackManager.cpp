@@ -31,11 +31,11 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 	{
 		if (g_pPlaybackManager->IsPlayingBack() && g_bPlaybackSync)
 		{
-			DebugOutput("PlayingBack, and userIndex=%u", dwUserIndex);
+			//DebugOutput("PlayingBack, and userIndex=%u", dwUserIndex);
 			g_pPlaybackManager->DoPlayback(false, pInputState);
 			g_bPlaybackSync = false;
 
-			DebugOutput("DoPlayback success.");
+			//DebugOutput("DoPlayback success.");
 			return ERROR_SUCCESS;
 		}
 		else
@@ -48,7 +48,7 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 
 			if (*(unsigned long long*)(original_XInputGetState) == 0x0)
 			{
-				DebugOutput("original_XInputGetState is a null pointer.");
+				//DebugOutput("original_XInputGetState is a null pointer.");
 				return ERROR_SUCCESS;
 			}
 
