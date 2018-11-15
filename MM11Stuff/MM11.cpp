@@ -199,8 +199,36 @@ void ThreadProc()
 	}
 }*/
 
+void __fastcall KeyboardUpdate_Hook(unsigned long long rcx, unsigned long long rdx)
+{
+	static bool _bOnce = false;
+
+	if (!_bOnce) {
+		DebugOutput("KeyboardUpdate hook - OKThumb.");
+		_bOnce = true;
+	}
+	
+	struct KeyTable
+	{
+		unsigned long Keys[0xFF];
+	};
+
+	// lea rbx, qword ptr ds:[rcx+0x138]
+	KeyTable *pKeyTable = (KeyTable*)(&*(u64*)((u32)rcx + 0x138));
+
+	// mov dword ptr ds:[rbx+0x04], 0x40;
+	//pKeyTable->Keys[1] = 0x40;
+
+	// mov dword ptr ds:[rbx+0x24], 0x40;
+	//pKeyTable->Keys[9] = 0x40;
+
+
+	((void(__thiscall*)(unsigned long long))g_dwOriginalKeyboardUpdateAddress)(rcx);
+}
+
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
+	static bool _bHookKeyboardOnce = false;
 
 	if (GetAsyncKeyState(VK_F1) & 1 && !g_bPaused)
 	{
@@ -237,6 +265,19 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	if (GetAsyncKeyState(VK_DIVIDE) & 1)
 	{
 		ChangeGameSpeed(0.0f, true);
+	}
+
+	if (!_bHookKeyboardOnce)
+	{
+		unsigned long long _rcx = *(unsigned long long*)(ecx + 0x40208);
+		unsigned long long _rax = *(unsigned long long*)(_rcx);
+		// rax  + 0x30
+	
+		g_dwOriginalKeyboardUpdateAddress = *(unsigned long long*)(_rax + 0x30);
+		*(unsigned long long*)(_rax + 0x30) = (unsigned long long)KeyboardUpdate_Hook;
+
+		DebugOutput("Hooked KeyboardUpdate.");
+		_bHookKeyboardOnce = true;
 	}
 
 	// Only check  unpause or framestep while paused
@@ -300,7 +341,7 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 		g_dwOriginalGameLoopAddress = g_pVtable[6];
 
 		DWORD dwOldProt;
-		VirtualProtect((LPVOID)g_pVtable[2], 0x8, PAGE_EXECUTE_READWRITE, &dwOldProt);
+		VirtualProtect((LPVOID)g_pVtable[6], 0x8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 
 		g_pVtable[6] = (unsigned long long)GameLoop_Hook;
 
@@ -318,6 +359,8 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 
 void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 {
+	//DebugOutput("NativeInjectionEntryPoint");
+
 	NTSTATUS result = AddHook((void*)MPGAME_GETINPUTSTATE04_ADDRESS, CheckInputState04_Hook, NULL, &MM11_CheckInputState04_HookHandle);
 
 	if (FAILED(result))
@@ -338,6 +381,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	VirtualProtect((LPVOID)XINPUT_GETCAPS_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 	//VirtualProtect((LPVOID)REGISTERCLASSEXW_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 	//VirtualProtect((LPVOID)TIMEGETTIME_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
+
 	*(unsigned long long*)(XINPUT_IAT_ADDRESS) = (unsigned long long)XInputGetState_Hook;
 	*(unsigned long long*)(XINPUT_GETCAPS_IAT_ADDRESS) = (unsigned long long)XInputGetCapabilities_Hook;
 

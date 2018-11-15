@@ -21,10 +21,11 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 		bOnce = true;
 	}
 
-	if (!pInputState)
-		return ERROR_SUCCESS;
+	if (!pInputState || dwUserIndex > 0)
+		return ERROR_DEVICE_NOT_CONNECTED;
 
 	auto * p = &pInputState->Gamepad;
+
 
 	if (g_pPlaybackManager)
 	{
@@ -33,7 +34,6 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 			g_pPlaybackManager->DoPlayback(false, pInputState);
 			g_bPlaybackSync = false;
 
-			//DebugOutput("DoPlayback success, returning.");
 			return ERROR_SUCCESS;
 		}
 		else
@@ -47,12 +47,10 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 			if (*(unsigned long long*)(original_XInputGetState) == 0x0)
 				return ERROR_SUCCESS;
 
-			//DebugOutput("Returning original XInputGetState, not playing back or playbackSync is false.");
 			return original_XInputGetState(dwUserIndex, pInputState);
 		}
 	}
 
-	//DebugOutput("No playback at all..");
 	return original_XInputGetState(dwUserIndex, pInputState);
 }
 
