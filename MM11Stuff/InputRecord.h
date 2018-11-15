@@ -284,6 +284,26 @@ typedef struct t_InputRecord
 				auto negativelamb = [](char& ch) { ch = toupper((unsigned char)ch); };
 				std::for_each(token.begin(), token.end(), negativelamb);
 
+
+				auto lhstrim = [](std::string& in)
+				{
+					//lambception
+					auto iter = std::find_if(in.begin(), in.end(), [](char ch) { return !std::isspace((unsigned char)ch); });
+					in.erase(in.begin(), iter);
+					return in;
+				};
+
+				auto rhstrim = [](std::string& in)
+				{
+					auto iter2 = std::find_if(in.rbegin(), in.rend(), [](char ch) { return !std::isspace((unsigned char)ch); });
+					in.erase(iter2.base(), in.end());
+					return in;
+				};
+
+				// Remove the leading and trailing spaces.
+				token = lhstrim(token);
+				token = rhstrim(token);
+
 				if (token == "LEFT")
 				{
 					TempState |= EInputState::LEFT;

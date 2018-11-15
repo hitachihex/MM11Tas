@@ -38,6 +38,9 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 		}
 		else
 		{
+			if (!pInputState || dwUserIndex > 0)
+				return ERROR_DEVICE_NOT_CONNECTED;
+
 			if (!pInputState)
 				return ERROR_SUCCESS;
 
