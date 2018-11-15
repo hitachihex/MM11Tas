@@ -13,9 +13,6 @@ extern unsigned long g_ACLEntries[1];
 
 extern IDirectInputDevice *g_pDirectInputDevice;
 
-typedef unsigned long long u64;
-typedef unsigned long u32;
-
 /*typedef bool(__cdecl * oEventLoop)(void*, void*, void*, void*, void*, void*);
 oEventLoop originalEventLoop = (oEventLoop)(EventLoop_Address);*/
 typedef void(__fastcall * oCheckInputState04)(unsigned long, unsigned long);
@@ -43,8 +40,6 @@ extern unsigned long WINAPI XInputGetState_Hook(unsigned long, XINPUT_STATE*);
 extern unsigned long WINAPI XInputGetCapabilities_Hook(unsigned long, unsigned long, XINPUT_CAPABILITIES*);
 
 extern unsigned long long * g_pXInputGetState_IAT;
-
-extern void __fastcall KeyboardUpdate_Hook(unsigned long long, unsigned long long);
 
 //extern void HookDirectInputMethods();
 
