@@ -10,6 +10,7 @@ PlaybackManager * g_pPlaybackManager = nullptr;
 oXInputGetState original_XInputGetState = (oXInputGetState)(0x0);////(oXInputGetState)(*(unsigned long long*)XINPUT_IAT_ADDRESS);
 oXInputGetCapabilities original_XInputGetCapabilities = (oXInputGetCapabilities)(0x0);
 
+// COULD THIS BE THE HOLY GRAIL? THE SAME REDISTRIBUTABLES!!!
 // From MM11.h
 unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE* pInputState)
 {
