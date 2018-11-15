@@ -26,11 +26,16 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 
 	auto * p = &pInputState->Gamepad;
 
-
+	static bool bStartPlaybackOnce = false;
 	if (g_pPlaybackManager)
 	{
 		if (g_pPlaybackManager->IsPlayingBack() && g_bPlaybackSync)
 		{
+			if (!bStartPlaybackOnce)
+			{
+				DebugOutput("packetNumber for first step on playback is: %u", pInputState->dwPacketNumber);
+				bStartPlaybackOnce = true;
+			}
 			//DebugOutput("PlayingBack, and userIndex=%u", dwUserIndex);
 			g_pPlaybackManager->DoPlayback(false, pInputState);
 			g_bPlaybackSync = false;
