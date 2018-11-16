@@ -270,7 +270,6 @@ typedef struct t_InputRecord
 		while (std::getline(ss, token, ','))
 			tokens.push_back(token);
 
-		DebugOutput("InputRecord ctor - Set tokens in vector.");
 
 		this->m_Frames = (delimited == std::string::npos) ? std::stoul(line) : std::stoul(tokens[0]);
 
@@ -289,7 +288,6 @@ typedef struct t_InputRecord
 
 				auto negativelamb = [](char& ch) { ch = toupper((unsigned char)ch); };
 				std::for_each(token.begin(), token.end(), negativelamb);
-				DebugOutput("Uppercased current token.");
 
 				auto lhstrim = [](std::string& in)
 				{
@@ -306,12 +304,9 @@ typedef struct t_InputRecord
 					return in;
 				};
 
-				DebugOutput("Before trimming current token.");
 				// Remove the leading and trailing spaces.
 				token = lhstrim(token);
 				token = rhstrim(token);
-				DebugOutput("After trimming current token.");
-
 
 				if (token == "LEFT")
 				{
@@ -397,8 +392,6 @@ typedef struct t_InputRecord
 		}
 
 		this->m_InputState = (EInputState)(TempState);
-
-		DebugOutput("InputRecord ctor returning!");
 
 	}
 
