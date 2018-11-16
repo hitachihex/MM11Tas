@@ -401,7 +401,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 
 
 		// Done / Frames
-		sprintf(this->m_szCurrentManagerState, "(%u / %u) - [%s]\n TotalFrames: %u", this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n TotalFrames: %u", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
 			this->m_pCurrentInput->ToString().c_str(), this->m_nTotalFrameCount);
 
 		// Set our pointer to the one from the GetState hook.

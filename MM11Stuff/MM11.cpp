@@ -215,7 +215,12 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 
 	if (GetAsyncKeyState(VK_F4) & 1)
 	{
-		if (g_pPlaybackManager)
+		if (g_pPlaybackManager->IsPlayingBack())
+		{
+			g_pPlaybackManager->InitPlayback(true);
+			g_bPlaybackSync = false;
+		}
+		else
 		{
 			DebugOutput("Starting playback.");
 			g_pPlaybackManager->InitPlayback(false);
