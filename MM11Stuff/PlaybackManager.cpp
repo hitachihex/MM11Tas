@@ -180,7 +180,7 @@ bool PlaybackManager::ReadInputFile()
 			continue;
 		}
 
-		/*
+		
 		std::string stringBuffer(LineBuffer);
 		unsigned int indexRunto = stringBuffer.find("Runto");
 		unsigned int indexWalkto = stringBuffer.find("Walkto");
@@ -197,7 +197,7 @@ bool PlaybackManager::ReadInputFile()
 			// still increase linecount
 			linecount++;
 			continue;
-		}*/
+		}
 
 
 		InputRecord * p = new InputRecord(std::string(LineBuffer), ++linecount);
