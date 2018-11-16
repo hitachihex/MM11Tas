@@ -36,10 +36,21 @@ public:
 
 	XINPUT_STATE * GetXInputState();
 
+#pragma region PublicForExternalOSD
+	InputRecord * m_pCurrentInput;
+
+	unsigned long m_CurrentFrame;
+
+	unsigned long m_nTotalFrameCount;
+
+	bool m_bPlayingBack;
+
+	char m_szCurrentManagerState[120];
+#pragma endregion
+
+
 protected:
 private:
-
-	InputRecord * m_pCurrentInput;
 
 	std::vector<InputRecord*> m_Inputs;
 
@@ -47,19 +58,11 @@ private:
 
 	FILE * m_Fp;
 
-	unsigned long m_nTotalFrameCount;
-
 	unsigned long m_RuntoLineNo;
 
 	unsigned long m_WalktoLineNo;
 
-	unsigned long m_TotalFrameCountOfInputFile;
-
-	unsigned long m_CurrentFrame;
-
 	unsigned long m_FrameToNext;
-
-	bool m_bPlayingBack;
 
 	XINPUT_STATE * m_pGamePadState;
 

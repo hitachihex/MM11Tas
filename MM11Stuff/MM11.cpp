@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "D3D11Hooks.h"
 #include "MM11.h"
 #include "Game.h"
 #include "PlaybackManager.h"
@@ -321,7 +322,11 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 
 		*(unsigned long long*)(&original_XInputGetState) = (unsigned long long) GetProcAddress(GetModuleHandle(L"xinput1_3.dll"), "XInputGetState");
 
+		//SetupD3D11Hooks();
 		DebugOutput("Original XInputGetState = %llx", (unsigned long long)original_XInputGetState);
+
+		// g_pPlaybackManager
+		//000000018000A928
 	}
 
 	//HookDirectInputMethods();
@@ -361,4 +366,30 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 	g_pPlaybackManager = new PlaybackManager("megaman.rec");
 
+	DumpPointersForExternalOSD();
+
+}
+
+// shut up c4996
+#pragma warning(disable : 4996)
+void DumpPointersForExternalOSD()
+{
+	// Just reference them and %X print to file?
+	FILE * pOutFile = nullptr;
+
+	pOutFile = fopen("pointer_ref.txt", "w");
+
+	if (!pOutFile)
+	{
+		DebugOutput("Couldn't open file handle to dump pointers?");
+		return;
+	}
+
+	unsigned long long ** pPlaybackManager = (unsigned long long**)&g_pPlaybackManager;
+	unsigned long long ** isPlayingBack = (unsigned long long**)&g_pPlaybackManager->m_bPlayingBack;
+	unsigned long long ** pManagerStateString = (unsigned long long**)&g_pPlaybackManager->m_szCurrentManagerState[0];
+
+	fprintf(pOutFile, "%llx,%llx,%llx", pPlaybackManager, isPlayingBack, pManagerStateString);
+
+	fclose(pOutFile);
 }

@@ -111,7 +111,7 @@ unsigned long WINAPI XInputGetCapabilities_Hook(unsigned long dwUserIndex, unsig
 	return ERROR_SUCCESS;
 }
 
-
+#pragma optimize("", off)
 XINPUT_STATE * PlaybackManager::GetXInputState()
 {
 	return this->m_pGamePadState;
@@ -119,6 +119,9 @@ XINPUT_STATE * PlaybackManager::GetXInputState()
 
 PlaybackManager::PlaybackManager(const char *pcszFileName)
 {
+	// Clear this so it doesn't have junk in it
+	memset(&this->m_szCurrentManagerState[0], 0, 120);
+
 	this->m_pGamePadState = nullptr;
 	this->m_nTotalFrameCount = 0;
 	this->m_Fp = NULL;
@@ -295,6 +298,8 @@ unsigned long PlaybackManager::GetCurrentInputIndex()
 }
 
 
+// shut up c4996
+#pragma warning(disable : 4996)
 void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 {
 	if (!this->m_bPlayingBack)
@@ -393,6 +398,10 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		this->m_CurrentFrame++;
 
 
+		// Done / Frames
+		sprintf(this->m_szCurrentManagerState, "(%u / %u) - [%s]\n TotalFrames: %u", this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+			this->m_pCurrentInput->ToString().c_str(), this->m_nTotalFrameCount);
+
 		// Set our pointer to the one from the GetState hook.
 		this->m_pGamePadState = pxInpState;
 
@@ -403,7 +412,6 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		pxInpState->dwPacketNumber = this->m_CurrentFrame;
 
 	}
-
 
 	return;
 }
@@ -417,3 +425,4 @@ InputRecord * PlaybackManager::GetCurrentInputIndexBased()
 {
 	return (this->m_InputIndex == this->m_Inputs.size()) ? nullptr : this->m_Inputs[this->m_InputIndex];
 }
+#pragma optimize("", on)

@@ -8,6 +8,7 @@
 #include <Xinput.h>
 #include <dinput.h>
 #include "Utils.h"
+#include "DebugUtils.h"
 
 extern unsigned long g_ACLEntries[1];
 
@@ -48,6 +49,8 @@ extern unsigned long long * g_pXInputGetState_IAT;
 //extern LRESULT CALLBACK MainWindowProc_Hook(HWND, UINT, WPARAM, LPARAM);
 
 extern void _FixIATRehook();
+
+extern void DumpPointersForExternalOSD();
 
 //extern unsigned long __fastcall TimeGetTime_Hook();
 
