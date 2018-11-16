@@ -56,4 +56,5 @@ extern void DumpPointersForExternalOSD();
 
 extern float * g_fGlobalGameSpeed;
 extern bool g_bPlaybackSync;
+extern bool g_bDidFrameStep;
 

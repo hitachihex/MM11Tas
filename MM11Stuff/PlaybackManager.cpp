@@ -30,8 +30,9 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 	{
 		if (g_pPlaybackManager->IsPlayingBack() && g_bPlaybackSync)
 		{
-			g_pPlaybackManager->DoPlayback(false, pInputState);
+			g_pPlaybackManager->DoPlayback(g_bDidFrameStep, pInputState);
 			g_bPlaybackSync = false;
+			g_bDidFrameStep = false;
 
 			//DebugOutput("DoPlayback success, returning.");
 			return ERROR_SUCCESS;
@@ -304,6 +305,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 {
 	if (!this->m_bPlayingBack)
 	{
+		memset(&this->m_szCurrentManagerState[0], 0, 120);
 		return;
 	}
 

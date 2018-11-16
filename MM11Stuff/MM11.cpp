@@ -12,6 +12,7 @@ extern "C" void __declspec(dllexport) __stdcall NativeInjectionEntryPoint(REMOTE
 
 float * g_fGlobalGameSpeed = nullptr;
 bool g_bPlaybackSync = false;
+bool g_bDidFrameStep = false;
 
 oCheckInputState04 original_CheckInputState04 = (oCheckInputState04)(MPGAME_GETINPUTSTATE04_ADDRESS);
 
@@ -246,6 +247,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	// Only check  unpause or framestep while paused
 	if (g_bPaused)
 	{
+		g_bDidFrameStep = false;
 		// Handle unpause case.
 		if (GetAsyncKeyState(VK_F1) & 1)
 		{
@@ -260,6 +262,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		// Handle framestepping case.
 		if (GetAsyncKeyState(VK_OEM_6) & 1)
 		{
+			g_bDidFrameStep = true;
 			DebugOutput("Stepping.");
 			g_bPlaybackSync = true;
 			((void(__thiscall *)(unsigned long long))g_dwOriginalGameLoopAddress)(ecx);
