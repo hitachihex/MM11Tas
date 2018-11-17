@@ -217,11 +217,13 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	{
 		if (g_pPlaybackManager->IsPlayingBack())
 		{
+			memset(&g_pPlaybackManager->m_szCurrentManagerState[0], 0, 120);
 			g_pPlaybackManager->InitPlayback(true);
 			g_bPlaybackSync = false;
 		}
 		else
 		{
+			memset(&g_pPlaybackManager->m_szCurrentManagerState[0], 0, 120);
 			DebugOutput("Starting playback.");
 			g_pPlaybackManager->InitPlayback(false);
 			DebugOutput("InitPlayback success.");
