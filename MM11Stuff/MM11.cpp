@@ -13,6 +13,7 @@ extern "C" void __declspec(dllexport) __stdcall NativeInjectionEntryPoint(REMOTE
 float * g_fGlobalGameSpeed = nullptr;
 bool g_bPlaybackSync = false;
 bool g_bDidFrameStep = false;
+unsigned long long g_llGameLoopRcx = 0x0;
 
 oCheckInputState04 original_CheckInputState04 = (oCheckInputState04)(MPGAME_GETINPUTSTATE04_ADDRESS);
 
@@ -201,6 +202,24 @@ void ThreadProc()
 	}
 }*/
 
+bool IsLoading(unsigned long long argRcx)
+{
+	if (argRcx == 0)
+		return true;
+
+	// rcx+0x401F0
+	// byte ptr ds:[rcx+0x38]
+	unsigned long long mpArea = *(unsigned long long*)(argRcx + 0x401F0);
+	bool bLoading = *(bool*)(mpArea + 0x38);
+
+	// If this is false (0), we are loading.
+	if (!bLoading)
+		return true;
+
+	// Ok, we're not loading.
+	return false;
+}
+
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
 
@@ -212,7 +231,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		return;
 	}
 
-
+	g_llGameLoopRcx = ecx;
 	if (GetAsyncKeyState(VK_F4) & 1)
 	{
 		if (g_pPlaybackManager->IsPlayingBack())

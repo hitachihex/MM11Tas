@@ -52,9 +52,11 @@ extern void _FixIATRehook();
 
 extern void DumpPointersForExternalOSD();
 
+extern bool IsLoading(unsigned long long);
 //extern unsigned long __fastcall TimeGetTime_Hook();
 
 extern float * g_fGlobalGameSpeed;
 extern bool g_bPlaybackSync;
 extern bool g_bDidFrameStep;
+extern unsigned long long g_llGameLoopRcx;
 
