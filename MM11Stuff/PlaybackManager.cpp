@@ -400,15 +400,16 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		this->m_CurrentFrame++;
 
 
-		// Done / Frames
-		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n TotalFrames: %u", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
-			this->m_pCurrentInput->ToString().c_str(), this->m_nTotalFrameCount);
 
 		// Set our pointer to the one from the GetState hook.
 		this->m_pGamePadState = pxInpState;
 
 		// Set the pad state to the input record state.
 		m_pCurrentInput->GetRecordState(pxInpState);
+
+		// Done / Frames
+		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n TotalFrames: %u", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+			this->m_pCurrentInput->ToString().c_str(), this->m_nTotalFrameCount);
 
 		// Packet number is our current frame.
 		pxInpState->dwPacketNumber = this->m_CurrentFrame;
