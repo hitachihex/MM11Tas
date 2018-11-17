@@ -182,11 +182,10 @@ bool PlaybackManager::ReadInputFile()
 
 		
 		std::string stringBuffer(LineBuffer);
-		unsigned int indexRunto = stringBuffer.find("Runto");
-		unsigned int indexWalkto = stringBuffer.find("Walkto");
+		unsigned long long indexRunto = stringBuffer.find("Runto");
+		unsigned long long  indexWalkto = stringBuffer.find("Walkto");
 		if (indexRunto != std::string::npos)
 		{
-			DebugOutput("Found Runto, continue step on tokens.");
 			this->m_RuntoLineNo = linecount;
 			// still increase linecount
 			linecount++;
@@ -194,7 +193,6 @@ bool PlaybackManager::ReadInputFile()
 		}
 		else if (indexWalkto != std::string::npos)
 		{
-			DebugOutput("Found walkto, continue step on tokens.");
 			this->m_WalktoLineNo = linecount;
 			// still increase linecount
 			linecount++;

@@ -58,9 +58,9 @@ private:
 
 	FILE * m_Fp;
 
-	unsigned long m_RuntoLineNo;
+	unsigned long long m_RuntoLineNo;
 
-	unsigned long m_WalktoLineNo;
+	unsigned long long m_WalktoLineNo;
 
 	unsigned long m_FrameToNext;
 

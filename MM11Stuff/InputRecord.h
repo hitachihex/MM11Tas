@@ -45,7 +45,7 @@ typedef struct t_InputRecord
 
 	int m_Done;
 
-	unsigned int m_nLineNo;
+	unsigned long long m_nLineNo;
 
 	std::map<std::string, std::pair<signed short, signed short>> m_WeaponSelectMapping = {
 		{"Block", std::make_pair(-1*32768, 1*32767)},
