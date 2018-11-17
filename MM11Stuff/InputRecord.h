@@ -162,6 +162,12 @@ typedef struct t_InputRecord
 		if (this->IsRushJet())
 			pad->wButtons |= XINPUT_GAMEPAD_B;
 
+		if (this->IsSpeedGear())
+			pad->wButtons |= XINPUT_GAMEPAD_RIGHT_SHOULDER;
+
+		if (this->IsPowerGear())
+			pad->wButtons |= XINPUT_GAMEPAD_LEFT_SHOULDER;
+
 		// Added buster.
 		if (this->IsBuster())
 			pad->wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
