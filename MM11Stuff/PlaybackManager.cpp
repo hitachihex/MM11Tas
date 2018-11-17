@@ -411,7 +411,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		m_pCurrentInput->GetRecordState(pxInpState);
 
 		// Done / Frames
-		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n TotalFrames: %u", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\nTotalFrames: %u", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
 			this->m_pCurrentInput->ToString().c_str(), this->m_nTotalFrameCount);
 
 		// Packet number is our current frame.
