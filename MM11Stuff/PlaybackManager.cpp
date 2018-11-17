@@ -309,6 +309,9 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		return;
 	}
 
+	if(wasFramestepped)
+		memset(&this->m_szCurrentManagerState[0], 0, 120);
+
 	if (!pxInpState)
 	{
 		DebugOutput("Null input state in DoPlayback??? ! ?");
