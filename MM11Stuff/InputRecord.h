@@ -63,6 +63,7 @@ typedef struct t_InputRecord
 	std::string ToString()
 	{
 		std::string result = "";
+		bool bSlideAlias = false;
 
 		//result += "(LineNo: " + this->m_nLineNo;
 		result += std::to_string(this->m_Frames);
@@ -75,10 +76,17 @@ typedef struct t_InputRecord
 		if (this->IsUp())
 			result += ",Up";
 
-		if (this->IsDown())
+
+		if (this->IsDown() && this->IsJump())
+		{
+			result += ",Slide";
+			bSlideAlias = true;
+		}
+
+		if (this->IsDown() && !bSlideAlias)
 			result += ",Down";
 		
-		if (this->IsJump())
+		if (this->IsJump() && !bSlideAlias)
 			result += ",Jump";
 
 		if (this->IsPowerGear())
@@ -382,6 +390,11 @@ typedef struct t_InputRecord
 				else if (token == "BUSTER")
 				{
 					TempState |= EInputState::BUSTER;
+					continue;
+				}
+				else if (token == "SLIDE")
+				{
+					TempState |= (EInputState::JUMP | EInputState::DOWN);
 					continue;
 				}
 
