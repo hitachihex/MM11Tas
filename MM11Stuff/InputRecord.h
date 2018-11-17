@@ -64,7 +64,7 @@ typedef struct t_InputRecord
 	{
 		std::string result = "";
 
-		result += "(LineNo: " + this->m_nLineNo;
+		//result += "(LineNo: " + this->m_nLineNo;
 		result += std::to_string(this->m_Frames);
 		if (this->IsLeft())
 			result += ",Left";
