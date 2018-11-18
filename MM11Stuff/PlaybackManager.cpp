@@ -203,6 +203,15 @@ bool PlaybackManager::ReadInputFile()
 
 		InputRecord * p = new InputRecord(std::string(LineBuffer), ++linecount);
 
+		// invalid InputRecord.
+		if (p->m_Frames == -1)
+		{
+			// free this crap, get it out of here
+			delete p;
+			memset(LineBuffer, 0, sizeof(LineBuffer) / sizeof(LineBuffer[0]));
+			continue;
+		}
+
 		this->m_nTotalFrameCount += p->m_Frames;
 		this->m_Inputs.push_back(p);
 		memset(LineBuffer, 0, sizeof(LineBuffer) / sizeof(LineBuffer[0]));

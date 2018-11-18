@@ -16,6 +16,17 @@ bool g_bDidFrameStep = false;
 unsigned long long g_llGameLoopRcx = 0x0;
 
 oCheckInputState04 original_CheckInputState04 = (oCheckInputState04)(MPGAME_GETINPUTSTATE04_ADDRESS);
+oHandleGameSpeed original_HandleGameSpeed = (oHandleGameSpeed)(HANDLEGAMESPEED_ADDRESS);
+oHandleGameSpeed2 original_HandleGameSpeed2 = (oHandleGameSpeed2)(HANDLEGAMESPEED02_ADDRESS);
+oComInitOriginal00 original_ComInit00 = (oComInitOriginal00)(COMINIT00_ADDRESS);
+
+HOOK_TRACE_INFO MM11_HandleGameSpeed_HookHandle = { NULL };
+HOOK_TRACE_INFO MM11_HandleGameSpeed2_HookHandle = { NULL };
+
+HOOK_TRACE_INFO MM11_MTObjectComInit00_HookHandle = { NULL };
+HOOK_TRACE_INFO MM11_MTObjectComInit01_HookHandle = { NULL };
+HOOK_TRACE_INFO MM11_MTObjectComInit02_HookHandle = { NULL };
+HOOK_TRACE_INFO MM11_MTObjectComInit03_HookHandle = { NULL };
 
 
 /*
@@ -150,13 +161,83 @@ void _FuckYourLimiter()
 
 }
 
+// Handles megaman's speed only.
+void __fastcall HandleGameSpeed2_Hook(unsigned long long rcx)
+{
+	static bool bOnce = false;
+	if (!bOnce)
+	{
+		DebugOutput("HandleGameSpeed2_Hook, !bOnce");
+		bOnce = true;
+	}
+
+	//float * pSpeedMultiplier = (float*)(rcx + 0x28);
+	//*pSpeedMultiplier = 1.0f;
+	return original_HandleGameSpeed2(rcx);
+}
+
+// I'm not sure what this even does??
+unsigned long __fastcall HandleGameSpeed_Hook(unsigned long long rcx, unsigned long long rdx, unsigned long long r8, unsigned long long r9)
+{
+	static bool bOnce = false;
+
+	if (!bOnce)
+	{
+		DebugOutput("HandleGameSpeed_Hook, !bOnce.");
+		bOnce = true;
+	}
+	// *rdx = 1.0, 	No matter what!
+	//float * pSpeedMultiplier = (float*)rdx;
+	//*pSpeedMultiplier = 1.0F;
+	return original_HandleGameSpeed(rcx, rdx, r8, r9);
+}
+
+void __fastcall MTObjectComInit_Hook00(unsigned long long rcx, unsigned long long rdx)
+{
+#pragma pack(push, 1)
+	struct Foobar
+	{
+
+		// 0x00 - 0x03
+		unsigned long * vtbl;
+
+		// 0x04 - 0x72
+		unsigned char m_ucUnknown04_72[0x70 - 0x04];
+
+		// 0x70 - 0x73
+		float m_Scale;
+
+		// 0x74 - 0x10F
+		unsigned char m_ucUnknown0074_0113[0x110 - 0x74];
+
+		// 0x110 - 0x113
+		float m_BaseFPS;
+
+		// 0x114 - 0x117
+		float m_DeltaTimeRate;
+
+		// 0x118 - 0x11B
+		unsigned long m_dwUnknown00;
+
+		// 0x11C - 0x11F
+		float m_TimeInterpolationRate;
+
+	};
+#pragma pack(pop)
+
+	Foobar *pFoobar = (Foobar*)(rcx);
+
+	//pFoobar->m_Scale = 50.0f;
+	//pFoobar->m_BaseFPS = 1000.0f;
+	//pFoobar->m_TimeInterpolationRate = 1000.0f;
+	return original_ComInit00(rcx, rdx);
+}
 
 void _FixIATRehook()
 {
 	//000000014D0311D1
 	unsigned char * pMem = (unsigned char*)(0x000000014D0311D1);
 
-	// Why the fuck you gonna reload it if I replace it? No thanks
 	*(pMem + 0x0) = 0x90;
 	*(pMem + 0x1) = 0x90;
 	*(pMem + 0x2) = 0x90;
@@ -212,14 +293,6 @@ static void ChangeGameSpeed(float f, bool reset = false)
 		return;
 	}
 
-	g_fGlobalGameSpeed = (float*)(rcx + 0x8C);
-	// so.. FPS needs to be 120, now?
-
-	if (*g_fGlobalGameSpeed == 1 && f < 1)
-	{
-		g_bPaused = true;
-		return;
-	}
 
 	// Just do multiples of 3??
 	//*pTest2 += (f * 3.0f);
@@ -293,8 +366,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	if (g_pPlaybackManager)
 	{
 		unsigned long long mpArea = *(unsigned long long*)(ecx + 0x401F0);
-		bool bLoading = *(bool*)(mpArea + 0x38);
-		g_pPlaybackManager->m_bLoading = *(bool*)(mpArea + 0x38);
+		g_pPlaybackManager->m_bLoading = (bool*)(mpArea + 0x38);
 	}
 
 
@@ -453,6 +525,46 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 		DebugOutput("GetInputState04 hooked ");
 	}
 	ExclusiveHook(&MM11_CheckInputState04_HookHandle);
+
+	
+#ifdef DEBUG_TESTS
+	result = AddHook((void*)HANDLEGAMESPEED_ADDRESS, HandleGameSpeed_Hook, NULL, &MM11_HandleGameSpeed_HookHandle);
+	if (FAILED(result))
+	{
+		auto err = RtlGetLastErrorString();
+		DebugOutputW(L"Failed to hook HandleGameSpeed, lastErr = %s", err);
+	}
+	else
+	{
+		DebugOutput("HandleGameSpeed hooked.");
+	}
+	ExclusiveHook(&MM11_HandleGameSpeed_HookHandle);
+
+	result = AddHook((void*)HANDLEGAMESPEED02_ADDRESS, HandleGameSpeed2_Hook, NULL, &MM11_HandleGameSpeed2_HookHandle);
+	if (FAILED(result))
+	{
+		auto err = RtlGetLastErrorString();
+		DebugOutputW(L"Failed to hook HandleGameSpeed2, lastErr =  %s", err);
+	}
+	else
+	{
+		DebugOutput("HandleGameSpeed2 hooked.");
+	}
+	ExclusiveHook(&MM11_HandleGameSpeed2_HookHandle);
+
+	result = AddHook((void*)COMINIT00_ADDRESS, MTObjectComInit_Hook00, NULL, &MM11_MTObjectComInit00_HookHandle);
+	if (FAILED(result))
+	{
+		auto err = RtlGetLastErrorString();
+		DebugOutputW(L"Failed to hook MTObjectComInit_Hook00, lastErr = %s", err);
+	}
+	else
+	{
+		DebugOutput("MTObjectComInit00 hooked.");
+	}
+	ExclusiveHook(&MM11_MTObjectComInit00_HookHandle);
+#endif
+
 
 	DWORD dwOldProt;
 	VirtualProtect((LPVOID)XINPUT_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);

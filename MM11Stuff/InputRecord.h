@@ -281,9 +281,16 @@ typedef struct t_InputRecord
 		while (std::getline(ss, token, ','))
 			tokens.push_back(token);
 
+		bool bWasValidToken = false;
+		// If we don't even have frames, well, this isn't a valid input record then.
+		if (!isdigit(line[0]))
+		{
+			this->m_Frames = -1;
+			return;
+		}
+
 
 		this->m_Frames = (delimited == std::string::npos) ? std::stoul(line) : std::stoul(tokens[0]);
-
 		unsigned int TempState = EInputState::DEFAULT_NONE;
 
 		// Make sure we don't have JUST framecount (null or empty inputs)
@@ -322,51 +329,61 @@ typedef struct t_InputRecord
 				if (token == "LEFT")
 				{
 					TempState |= EInputState::LEFT;
+					bWasValidToken = true;
 					continue;
 				}
 				else if(token=="RIGHT")
 				{
 					TempState |= EInputState::RIGHT;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "UP")
 				{
 					TempState |= EInputState::UP;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "DOWN")
 				{
 					TempState |= EInputState::DOWN;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "START")
 				{
 					TempState |= EInputState::START;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "SELECT")
 				{
 					TempState |= EInputState::SELECT;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "JUMP")
 				{
 					TempState |= EInputState::JUMP;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "SHOOT")
 				{
 					TempState |= EInputState::SHOOT;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "SGEAR")
 				{
 					TempState |= EInputState::SPEED_GEAR;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "PGEAR")
 				{
 					TempState |= EInputState::POWER_GEAR;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "WSELECT")
@@ -376,31 +393,37 @@ typedef struct t_InputRecord
 					if (weaponName == "Buster" || weaponName == "BUSTER")
 					{
 						TempState |= EInputState::BUSTER;
+						bWasValidToken = true;
 						continue;
 					}
 
 					TempState |= EInputState::WEAPON_SELECT;
 					this->m_WeaponSelectDir = this->m_WeaponSelectMapping[weaponName];
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "RCOIL")
 				{
 					TempState |= EInputState::RUSH_COIL;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "RJET")
 				{
 					TempState |= EInputState::RUSH_JET;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "BUSTER")
 				{
 					TempState |= EInputState::BUSTER;
+					bWasValidToken = true;
 					continue;
 				}
 				else if (token == "SLIDE")
 				{
 					TempState |= (EInputState::JUMP | EInputState::DOWN);
+					bWasValidToken = true;
 					continue;
 				}
 

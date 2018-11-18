@@ -10,6 +10,9 @@
 #include "Utils.h"
 #include "DebugUtils.h"
 
+#define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
+                                extern oComInitOriginal##num original_ComInit##num;
+
 extern unsigned long g_ACLEntries[1];
 
 extern IDirectInputDevice *g_pDirectInputDevice;
@@ -18,6 +21,14 @@ extern IDirectInputDevice *g_pDirectInputDevice;
 oEventLoop originalEventLoop = (oEventLoop)(EventLoop_Address);*/
 typedef void(__fastcall * oCheckInputState04)(unsigned long, unsigned long);
 extern oCheckInputState04 original_CheckInputState04;
+
+typedef unsigned long(__fastcall* oHandleGameSpeed)(unsigned long long, unsigned long long, unsigned long long, unsigned long long);
+extern oHandleGameSpeed original_HandleGameSpeed;
+typedef void(__fastcall * oHandleGameSpeed2)(unsigned long long);
+extern oHandleGameSpeed2 original_HandleGameSpeed2;
+
+typedef void(__fastcall *oComInitOriginal00)(unsigned long long, unsigned long long);
+extern oComInitOriginal00 original_ComInit00;
 
 //typedef ATOM(__fastcall * oRegisterClassExW)(WNDCLASSEXW*);
 //oRegisterClassExW original_RegisterClassExW = (oRegisterClassExW)(*(unsigned long long*)REGISTERCLASSEXW_IAT_ADDRESS);
@@ -31,8 +42,19 @@ extern oCheckInputState04 original_CheckInputState04;
 //extern HRESULT __fastcall DirectInputDevice_GetDeviceState_Hook(IDirectInputDevice*, unsigned long, LPVOID);
 
 extern HOOK_TRACE_INFO MM11_CheckInputState04_HookHandle;
+extern HOOK_TRACE_INFO MM11_HandleGameSpeed_HookHandle;
+extern HOOK_TRACE_INFO MM11_HandleGameSpeed2_HookHandle;
 
+extern HOOK_TRACE_INFO MM11_MTObjectComInit00_HookHandle;
+//extern HOOK_TRACE_INFO MM11_MTObjectComInit01_HookHandle;
+//extern HOOK_TRACE_INFO MM11_MTObjectComInit02_HookHandle;
+//extern HOOK_TRACE_INFO MM11_MTObjectComInit03_HookHandle;
+
+extern unsigned long __fastcall HandleGameSpeed_Hook(unsigned long long, unsigned long long, unsigned long long, unsigned long long);
+extern void __fastcall HandleGameSpeed2_Hook(unsigned long long);
 extern void __fastcall CheckInputState04_Hook(unsigned long, unsigned long);
+
+extern void __fastcall MTObjectComInit_Hook00(unsigned long long, unsigned long long);
 
 typedef unsigned long(WINAPI * oXInputGetState)(unsigned long, XINPUT_STATE*);
 extern oXInputGetState original_XInputGetState;

@@ -47,7 +47,7 @@ public:
 
 	char m_szCurrentManagerState[120];
 
-	bool m_bLoading;
+	bool *m_bLoading;
 #pragma endregion
 
 
