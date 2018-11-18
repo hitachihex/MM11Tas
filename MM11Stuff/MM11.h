@@ -10,6 +10,7 @@
 #include "Utils.h"
 #include "DebugUtils.h"
 
+#define FASTFORWARD_HOOK_TEST 1
 #define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
                                 extern oComInitOriginal##num original_ComInit##num;
 
@@ -29,6 +30,16 @@ extern oHandleGameSpeed2 original_HandleGameSpeed2;
 
 typedef void(__fastcall *oComInitOriginal00)(unsigned long long, unsigned long long);
 extern oComInitOriginal00 original_ComInit00;
+
+
+typedef bool(__fastcall *oQueryPerformanceCounter)(LARGE_INTEGER*);
+extern oQueryPerformanceCounter original_QueryPerformanceCounter;
+
+typedef unsigned long(__fastcall* oTimeGetTime)();
+extern oTimeGetTime original_TimeGetTime;
+
+typedef unsigned long(_fastcall * oGetTickCount)();
+extern oGetTickCount original_GetTickCount;
 
 //typedef ATOM(__fastcall * oRegisterClassExW)(WNDCLASSEXW*);
 //oRegisterClassExW original_RegisterClassExW = (oRegisterClassExW)(*(unsigned long long*)REGISTERCLASSEXW_IAT_ADDRESS);
@@ -76,7 +87,16 @@ extern void _FuckYourLimiter();
 extern void DumpPointersForExternalOSD();
 
 extern bool IsLoading(unsigned long long);
-//extern unsigned long __fastcall TimeGetTime_Hook();
+
+extern void InitFastForward();
+
+extern unsigned long __fastcall TimeGetTime_Hook();
+extern bool __fastcall QueryPerformanceCounter_Hook(LARGE_INTEGER*);
+extern unsigned long __fastcall GetTickCount_Hook();
+extern unsigned long g_dwBaseTime;
+extern unsigned long g_dwTickCount;
+extern int64_t g_dwPerformanceCount;
+extern unsigned long g_dwGameSpeed;
 
 extern float * g_fGlobalGameSpeed;
 extern bool g_bPlaybackSync;

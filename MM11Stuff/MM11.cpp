@@ -3,8 +3,10 @@
 #include "MM11.h"
 #include "Game.h"
 #include "PlaybackManager.h"
+#include <timeapi.h>
 
 
+#pragma comment(lib, "winmm.lib")
 HOOK_TRACE_INFO MM11_CheckInputState04_HookHandle = { NULL };
 unsigned long g_ACLEntries[1];
 
@@ -15,10 +17,21 @@ bool g_bPlaybackSync = false;
 bool g_bDidFrameStep = false;
 unsigned long long g_llGameLoopRcx = 0x0;
 
+// testing forced speedup through hooks.
+unsigned long g_dwBaseTime = 0x0;
+unsigned long g_dwTickCount = 0x0;
+int64_t g_dwPerformanceCount = 0x0;
+unsigned long g_dwGameSpeed = 1;
+
 oCheckInputState04 original_CheckInputState04 = (oCheckInputState04)(MPGAME_GETINPUTSTATE04_ADDRESS);
 oHandleGameSpeed original_HandleGameSpeed = (oHandleGameSpeed)(HANDLEGAMESPEED_ADDRESS);
 oHandleGameSpeed2 original_HandleGameSpeed2 = (oHandleGameSpeed2)(HANDLEGAMESPEED02_ADDRESS);
 oComInitOriginal00 original_ComInit00 = (oComInitOriginal00)(COMINIT00_ADDRESS);
+
+
+oQueryPerformanceCounter original_QueryPerformanceCounter = (oQueryPerformanceCounter)(*(unsigned long long*)QPC_IAT_ADDRESS);
+oTimeGetTime             original_TimeGetTime = (oTimeGetTime)(*(unsigned long long*)TIMEGETTIME_IAT_ADDRESS);
+oGetTickCount            original_GetTickCount = (oGetTickCount)(*(unsigned long long*)GETTICKCOUNT_IAT_ADDRESS);
 
 HOOK_TRACE_INFO MM11_HandleGameSpeed_HookHandle = { NULL };
 HOOK_TRACE_INFO MM11_HandleGameSpeed2_HookHandle = { NULL };
@@ -28,6 +41,65 @@ HOOK_TRACE_INFO MM11_MTObjectComInit01_HookHandle = { NULL };
 HOOK_TRACE_INFO MM11_MTObjectComInit02_HookHandle = { NULL };
 HOOK_TRACE_INFO MM11_MTObjectComInit03_HookHandle = { NULL };
 
+
+void InitFastForward()
+{
+	DebugOutput("Init fast forward hooks.");
+	g_dwTickCount = GetTickCount();
+	g_dwBaseTime = timeGetTime();
+	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&g_dwPerformanceCount));
+
+	*(unsigned long long*)(TIMEGETTIME_IAT_ADDRESS) = (unsigned long long)TimeGetTime_Hook;
+	*(unsigned long long*)(QPC_IAT_ADDRESS) = (unsigned long long)QueryPerformanceCounter_Hook;
+	// done
+	DebugOutput("All done.");
+}
+
+unsigned long __fastcall TimeGetTime_Hook()
+{
+	static bool bOnce = false;
+
+	if (!bOnce) {
+		bOnce = true;
+		DebugOutput("timeGetTime hook ok ");
+	}
+
+	auto curGetTime = original_TimeGetTime();
+	// ??
+	return g_dwBaseTime + ((curGetTime - g_dwBaseTime) * g_dwGameSpeed);
+}
+
+unsigned long __fastcall GetTickCount_Hook()
+{
+	static bool bOnce = false;
+	if (!bOnce)
+	{
+		bOnce = true;
+		DebugOutput("GetTickCount hook, !bOnce");
+	}
+
+	auto curTickCount = original_GetTickCount();
+	return g_dwTickCount + ((curTickCount - g_dwTickCount) * g_dwGameSpeed);
+}
+
+bool __fastcall QueryPerformanceCounter_Hook(LARGE_INTEGER * pPerformanceCounter)
+{
+	static bool bOnce = false;
+	if (!bOnce)
+	{
+		bOnce = true;
+		DebugOutput("QueryPerformanceCounter hook, !bOnce");
+	}
+
+	int64_t curPerfCounter;
+	if (!original_QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&curPerfCounter)))
+		return false;
+
+	auto newTime = curPerfCounter + ((curPerfCounter - g_dwPerformanceCount) * g_dwGameSpeed);
+	*pPerformanceCounter = *reinterpret_cast<LARGE_INTEGER*>(&newTime);
+	
+	return true;
+}
 
 /*
 LRESULT CALLBACK MainWindowProc_Hook(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -244,25 +316,33 @@ void _FixIATRehook()
 	*(pMem + 0x3) = 0x90;
 }
 
-/*
-unsigned long __fastcall TimeGetTime_Hook()
-{
-	static bool bOnce = false;
-
-	if (!bOnce) {
-		bOnce = true;
-		DebugOutput("timeGetTime hook ok ");
-	}
-	// ??
-	return ULONG_MAX;
-}*/
 
 static void ChangeGameSpeed(float f, bool reset = false)
 {
+#ifdef FASTFORWARD_HOOK_TEST
+	g_dwGameSpeed += (unsigned long)f;
+	DebugOutput("GameSpeed is now: %u", g_dwGameSpeed);
+#else
 	float * pfTimeStep = (float*)(0x1409C3A34);
-
 	unsigned long long rcx = *(unsigned long long*)(MPENVIRONMENTVARIABLES_ADDRESS);
 	if (!rcx) return;
+
+	g_fGlobalGameSpeed = (float*)(rcx + 0x8C);
+
+	if (reset) {
+		*g_fGlobalGameSpeed = 1.0;
+		return;
+	}
+
+	if (*g_fGlobalGameSpeed == 1 && f < 1)
+	{
+		g_bPaused = true;
+		return;
+	}
+
+	*g_fGlobalGameSpeed += (f);
+#endif
+
 
 	/*
 	if (reset)
@@ -303,20 +383,6 @@ static void ChangeGameSpeed(float f, bool reset = false)
 	float *pFps = (float*)(rcx + 0x50);
 	*pFps = 120.0;*/
 
-	g_fGlobalGameSpeed = (float*)(rcx + 0x8C);
-
-	if (reset) {
-		*g_fGlobalGameSpeed = 1.0;
-		return;
-	}
-
-	if (*g_fGlobalGameSpeed == 1 && f < 1)
-	{
-		g_bPaused = true;
-		return;
-	}
-
-	*g_fGlobalGameSpeed += (f);
 
 }
 
@@ -574,8 +640,14 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	*(unsigned long long*)(XINPUT_IAT_ADDRESS) = (unsigned long long)XInputGetState_Hook;
 	*(unsigned long long*)(XINPUT_GETCAPS_IAT_ADDRESS) = (unsigned long long)XInputGetCapabilities_Hook;
 
-	//*(unsigned long long*)(REGISTERCLASSEXW_IAT_ADDRESS) = (unsigned long long)RegisterClassExW_Hook;
-	//*(unsigned long long*)(TIMEGETTIME_IAT_ADDRESS) = (unsigned long long)TimeGetTime_Hook;
+#ifdef FASTFORWARD_HOOK_TEST
+	VirtualProtect((LPVOID)TIMEGETTIME_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
+	VirtualProtect((LPVOID)QPC_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
+
+	// no get tick count hook required.
+	InitFastForward();
+#endif
+
 
 	_FixIATRehook();
 	//_FuckYourLimiter();
