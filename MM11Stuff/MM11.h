@@ -10,7 +10,7 @@
 #include "Utils.h"
 #include "DebugUtils.h"
 
-#define FASTFORWARD_HOOK_TEST 1
+
 #define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
                                 extern oComInitOriginal##num original_ComInit##num;
 
