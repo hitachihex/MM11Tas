@@ -292,8 +292,9 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	g_llGameLoopRcx = ecx;
 	if (g_pPlaybackManager)
 	{
-		// just flip it for readability
-		g_pPlaybackManager->m_bLoading = !IsLoading(ecx);
+		unsigned long long mpArea = *(unsigned long long*)(ecx + 0x401F0);
+		bool bLoading = *(bool*)(mpArea + 0x38);
+		g_pPlaybackManager->m_bLoading = *(bool*)(mpArea + 0x38);
 	}
 
 

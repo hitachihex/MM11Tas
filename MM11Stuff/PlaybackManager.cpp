@@ -120,6 +120,7 @@ XINPUT_STATE * PlaybackManager::GetXInputState()
 
 PlaybackManager::PlaybackManager(const char *pcszFileName)
 {
+	this->m_bLoading = false;
 	// Clear this so it doesn't have junk in it
 	memset(&this->m_szCurrentManagerState[0], 0, 120);
 
