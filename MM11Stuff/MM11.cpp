@@ -135,11 +135,28 @@ void HookDirectInputMethods()
 
 */
 
+void _FuckYourLimiter()
+{
+	//0000000148E3270D
+
+	// Forcing this to 1.0 for part of the update loop? Hmm
+	// mov dword ptr ds:[rcx+0x80], 0x3F800000
+
+	unsigned char * pMem = (unsigned char*)(0x0000000148E3270D);
+	
+	//const unsigned char  * replaceBytes = "\x90\x90\x90\x90\x90"
+	for (unsigned int i = 0; i < 10; i++)
+		*(pMem + i) = 0x90;
+
+}
+
+
 void _FixIATRehook()
 {
 	//000000014D0311D1
 	unsigned char * pMem = (unsigned char*)(0x000000014D0311D1);
 
+	// Why the fuck you gonna reload it if I replace it? No thanks
 	*(pMem + 0x0) = 0x90;
 	*(pMem + 0x1) = 0x90;
 	*(pMem + 0x2) = 0x90;
@@ -161,15 +178,65 @@ unsigned long __fastcall TimeGetTime_Hook()
 
 static void ChangeGameSpeed(float f, bool reset = false)
 {
+	float * pfTimeStep = (float*)(0x1409C3A34);
+
 	unsigned long long rcx = *(unsigned long long*)(MPENVIRONMENTVARIABLES_ADDRESS);
 	if (!rcx) return;
+
+	/*
+	if (reset)
+	{
+		*pfTimeStep = 3.0f;
+		return;
+	}*/
+
+	//float *pfEngineUpdateRate = (float*)(rcx + 0x80);
+	//*pfEngineUpdateRate += (f);
+
+	// So what if we only change the timestep??
+	//*pfTimeStep += (f * 3.0f);
+	/*
+	float *pTest = (float*)(rcx + 0x80);
+
+	// Ok this.. is zoom, or something. Lol
+	float *pZoom_Q = (float*)(0x00000001409BE564);
+
+	// The engine timestep!
+	float *pTest2 = (float*)(0x1409C3A34);
+
+	if (reset) {
+		//*pZoom_Q = 1.0f;
+		*pTest = 1.0f;
+		*pTest2 = 3.0f;
+		*g_fGlobalGameSpeed = 1.0;
+		return;
+	}
+
+	g_fGlobalGameSpeed = (float*)(rcx + 0x8C);
+	// so.. FPS needs to be 120, now?
+
+	if (*g_fGlobalGameSpeed == 1 && f < 1)
+	{
+		g_bPaused = true;
+		return;
+	}
+
+	// Just do multiples of 3??
+	//*pTest2 += (f * 3.0f);
+	//*pZoom_Q += (f);
+	*pTest += (f);
+	*g_fGlobalGameSpeed += (f);
+	// so.. change teh fps to 120??
+	float *pFps = (float*)(rcx + 0x50);
+	*pFps = 120.0;*/
+
+	g_fGlobalGameSpeed = (float*)(rcx + 0x8C);
 
 	if (reset) {
 		*g_fGlobalGameSpeed = 1.0;
 		return;
 	}
 
-	g_fGlobalGameSpeed = (float*)(rcx + 0x8C);
 	if (*g_fGlobalGameSpeed == 1 && f < 1)
 	{
 		g_bPaused = true;
@@ -222,6 +289,13 @@ bool IsLoading(unsigned long long argRcx)
 
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
+	g_llGameLoopRcx = ecx;
+	if (g_pPlaybackManager)
+	{
+		// just flip it for readability
+		g_pPlaybackManager->m_bLoading = !IsLoading(ecx);
+	}
+
 
 	if (GetAsyncKeyState(VK_F1) & 1 && !g_bPaused)
 	{
@@ -231,7 +305,6 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		return;
 	}
 
-	g_llGameLoopRcx = ecx;
 	if (GetAsyncKeyState(VK_F4) & 1)
 	{
 		if (g_pPlaybackManager->IsPlayingBack())
@@ -392,6 +465,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	//*(unsigned long long*)(TIMEGETTIME_IAT_ADDRESS) = (unsigned long long)TimeGetTime_Hook;
 
 	_FixIATRehook();
+	//_FuckYourLimiter();
 
 	g_pPlaybackManager = new PlaybackManager("megaman.rec");
 
@@ -417,8 +491,9 @@ void DumpPointersForExternalOSD()
 	unsigned long long ** pPlaybackManager = (unsigned long long**)&g_pPlaybackManager;
 	unsigned long long ** isPlayingBack = (unsigned long long**)&g_pPlaybackManager->m_bPlayingBack;
 	unsigned long long ** pManagerStateString = (unsigned long long**)&g_pPlaybackManager->m_szCurrentManagerState[0];
+	unsigned long long ** mbLoading = (unsigned long long**)&g_pPlaybackManager->m_bLoading;
 
-	fprintf(pOutFile, "%llx,%llx,%llx", pPlaybackManager, isPlayingBack, pManagerStateString);
+	fprintf(pOutFile, "%llx,%llx,%llx,%llx", pPlaybackManager, isPlayingBack, pManagerStateString, mbLoading);
 
 	fclose(pOutFile);
 }

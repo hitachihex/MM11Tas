@@ -46,6 +46,8 @@ public:
 	bool m_bPlayingBack;
 
 	char m_szCurrentManagerState[120];
+
+	bool m_bLoading;
 #pragma endregion
 
 

@@ -49,6 +49,7 @@ extern unsigned long long * g_pXInputGetState_IAT;
 //extern LRESULT CALLBACK MainWindowProc_Hook(HWND, UINT, WPARAM, LPARAM);
 
 extern void _FixIATRehook();
+extern void _FuckYourLimiter();
 
 extern void DumpPointersForExternalOSD();
 

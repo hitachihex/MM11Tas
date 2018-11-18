@@ -14,4 +14,7 @@
 #define MPENVIRONMENTVARIABLES_ADDRESS 0x140C3F8A0
 #define D3D11MANAGER_ADDRESS 0x140C408F0
 
+//000000014BE73794 | 48:8B0D 4DE7DCF4         | mov rcx,qword ptr ds:[140C41EE8]                                           |
+#define MPGAME_PHYSICSENGINE_POINTER  0x140C41EE8
+
 //000000014912092F | 48:8B05 2AF5B1F7         | mov rax,qword ptr ds:[140C3FE60]                             |0
