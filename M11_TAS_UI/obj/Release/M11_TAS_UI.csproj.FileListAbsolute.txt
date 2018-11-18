@@ -1,0 +1,17 @@
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\bin\Release\images\4-direction.png
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\bin\Release\M11_TAS_UI.exe.config
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\bin\Release\M11_TAS_UI.exe
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\bin\Release\M11_TAS_UI.pdb
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.csprojAssemblyReference.cache
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\MainWindow.g.cs
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\App.g.cs
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI_Content.g.cs
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI_MarkupCompile.cache
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI_MarkupCompile.lref
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\MainWindow.baml
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.g.resources
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.Properties.Resources.resources
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.csproj.GenerateResource.cache
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.csproj.CoreCompileInputs.cache
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.exe
+C:\Users\Jeff\Documents\GitHub\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.pdb
