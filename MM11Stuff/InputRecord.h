@@ -289,7 +289,6 @@ typedef struct t_InputRecord
 			return;
 		}
 
-
 		this->m_Frames = (delimited == std::string::npos) ? std::stoul(line) : std::stoul(tokens[0]);
 		unsigned int TempState = EInputState::DEFAULT_NONE;
 

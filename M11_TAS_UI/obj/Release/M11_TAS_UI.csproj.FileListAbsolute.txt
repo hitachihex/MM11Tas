@@ -19,7 +19,6 @@ C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\bin\Release\images\4-di
 C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\bin\Release\M11_TAS_UI.exe.config
 C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\bin\Release\M11_TAS_UI.exe
 C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\bin\Release\M11_TAS_UI.pdb
-C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI.csprojAssemblyReference.cache
 C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\obj\Release\MainWindow.g.cs
 C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\obj\Release\App.g.cs
 C:\Users\zero\source\repos\hitachihex\MM11Tas\M11_TAS_UI\obj\Release\M11_TAS_UI_Content.g.cs

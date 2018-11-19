@@ -1,3 +1,4 @@
+﻿
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
@@ -18,3 +19,6 @@
 *.ipdb
 *.lib
 *.exp
+*.cache
+*.lref
+*.FileListAbsolute.txt

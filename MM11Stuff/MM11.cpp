@@ -307,13 +307,20 @@ void __fastcall MTObjectComInit_Hook00(unsigned long long rcx, unsigned long lon
 
 void _FixIATRehook()
 {
-	//000000014D0311D1
-	unsigned char * pMem = (unsigned char*)(0x000000014D0311D1);
+	//000000014D0311D1 - denuvo'd
+	//000000014092234D - drm free
+#define IATREHOOK_ADDRESS 0x000000014092234D
+	unsigned char * pMem = (unsigned char*)(0x000000014092234D);
+	
+	DWORD dwOldProt;
+	VirtualProtect((LPVOID)IATREHOOK_ADDRESS, 0x8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 
 	*(pMem + 0x0) = 0x90;
 	*(pMem + 0x1) = 0x90;
 	*(pMem + 0x2) = 0x90;
 	*(pMem + 0x3) = 0x90;
+
+	DebugOutput("Fixed IAT rehook.");
 }
 
 
@@ -428,6 +435,13 @@ bool IsLoading(unsigned long long argRcx)
 
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
+	static bool bOnce = false;
+
+	if (!bOnce)
+	{
+		DebugOutput("GameLoop_Hook, !bOnce");
+		bOnce = true;
+	}
 	g_llGameLoopRcx = ecx;
 	if (g_pPlaybackManager)
 	{
@@ -555,9 +569,11 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 		g_dwOriginalGameLoopAddress = g_pVtable[6];
 
 		DWORD dwOldProt;
-		VirtualProtect((LPVOID)g_pVtable[2], 0x8, PAGE_EXECUTE_READWRITE, &dwOldProt);
+		VirtualProtect((LPVOID)&g_pVtable[2], 0x8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 
+		DebugOutput("Wat, before g_pVtable set.");
 		g_pVtable[6] = (unsigned long long)GameLoop_Hook;
+		DebugOutput("after g_pVtable set.");
 
 		DebugOutput("Hooked GameLoop via vtable.");
 
