@@ -13,8 +13,7 @@ F1 - to pause\start framestep.
 
 F4 - start playback, read from megaman.rec in the directory where the game executable is located.
 
-Note: You may use multiple input files, see Commands section for input files. <br/ >
-But note that multi-level applies from the main input file only, so included input files may not read from another file.
+Note: You may use multiple input files, see Commands section for input files. <br/ >But note that multi-level applies from the main input file only, so included input files may not read from another file.
 --------------------------------------------------------
 
 ] - To step one frame (this also reloads the input file so you can make changes to the inputs while framestepping.)<br />
