@@ -10,8 +10,19 @@
         <SolidColorBrush Opacity="0" Color="White"/>
     </Window.Background>
     <Grid Margin="0,0,-509,0">
-        <Label x:Name="lblmyinfo" Content="MM11 Not Running" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1271" FontFamily="Verdana" FontSize="18" Foreground="#FFFFFF0B" Height="363" Margin="28,10,0,0"/>
+        <Label x:Name="lblmyinfo" Content="MM11 Not Found" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1271" FontFamily="Verdana" FontSize="18" Foreground="#FFFFFF0B" Height="363" Margin="28,10,0,0"/>
         <Button x:Name="btnInitialize" Content="Initialize" HorizontalAlignment="Left" Margin="76,40,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <Image x:Name="imgMoveMe" HorizontalAlignment="Right" Height="28" VerticalAlignment="Top" Width="28" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Margin="0,0,1281,0" Source="images/4-direction.png"/>
+        <Image x:Name="imgMoveMe" HorizontalAlignment="Right" Height="28" VerticalAlignment="Top" Width="28" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Margin="0,0,1281,0" Source="images/4-direction.png" ContextMenuOpening="ImgMoveMe_ContextMenuOpening">
+            <Image.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Name="OpenRecord" Header="Open Record: 'megaman.rec'" Click="MenuItemOpenRecord_Click" />
+                    <MenuItem Name="OpenFileLoc" Header="Open File Location" Click="MenuItemOpenFileLoc_Click" />
+                    <Separator/>
+                    <MenuItem Name="ReInject" Header="Re-Inject (Unstable)" Click="ReInject_Click" />
+                    <Separator/>
+                    <MenuItem Name="Exit" Header="Exit" Click="MenuItemExit_Click" />
+                </ContextMenu>
+            </Image.ContextMenu>
+        </Image>
     </Grid>
 </Window>

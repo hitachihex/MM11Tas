@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Globalization;
 
 namespace M11_TAS_UI
 {
@@ -29,6 +21,12 @@ namespace M11_TAS_UI
         [DllImport("kernel32.dll")]
         public static extern bool ReadProcessMemory(int hProcess, UInt64 lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
 
+        public static bool IsAdministrator()
+        {
+            return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
+                      .IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
         private const int PROCESS_ALL_ACCESS = (0x1F0FFF);
         private Process process;
         private IntPtr processHandle = IntPtr.Zero;
@@ -41,6 +39,7 @@ namespace M11_TAS_UI
         private UInt64 ptrIsLoading = 0;
         private UInt64 ptrIsPaused = 0;
         private string filepathToPointerRef = string.Empty;
+        private string filepathToMainRecord = string.Empty;
 
         private bool FindProcess()
         {
@@ -53,7 +52,29 @@ namespace M11_TAS_UI
                         process = Process.GetProcessesByName("game")[0];
                         processHandle = OpenProcess(PROCESS_ALL_ACCESS, false, process.Id);
                         filepathToPointerRef = process.MainModule.FileName.Replace("game.exe", "pointer_ref.txt");
-                        foundProcess = true;
+                        filepathToMainRecord = process.MainModule.FileName.Replace("game.exe", "megaman.rec");
+                        try
+                        {
+                            Process.Start("MM11Injector.exe");
+                            Console.WriteLine("Started MM11Injector.exe!");
+                            Thread.Sleep(1500);
+                            foundProcess = true;
+                        }
+                        catch (Exception)
+                        {
+                            try
+                            {
+                                Process.Start(@"..\..\..\x64\Release\MM11Injector.exe");
+                                Console.WriteLine("Oh hi! You must be debugging. Started MM11Injector.exe!");
+                                Thread.Sleep(1500);
+                                foundProcess = true;
+                            }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show("Unable to find MM11Injector.exe! Make sure it is in the same directory as this GUI!\n\n" + e.Message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                Console.WriteLine("Injector Error: " + e.Message);
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -91,14 +112,14 @@ namespace M11_TAS_UI
                 processHandle = IntPtr.Zero;
                 foundProcess = false;
                 foundInjectedPointers = false;
-                lblmyinfo.Content = "MM11 Not Running";
+                lblmyinfo.Content = "MM11 Not Found";
                 btnInitialize.Visibility = Visibility.Visible;
             }
 
 
             if (foundProcess && foundInjectedPointers)
             {
-                Test(processHandle);
+                DoWork(processHandle);
             }
 
         }
@@ -106,6 +127,11 @@ namespace M11_TAS_UI
         public MainWindow()
         {
             InitializeComponent();
+            if (!IsAdministrator())
+            {
+                MessageBox.Show("You aren't running as administrator! Exiting since this won't work :(", "Error", MessageBoxButton.OK, MessageBoxImage.Stop);
+                Application.Current.Shutdown();
+            }
             CompositionTarget.Rendering += DoUpdates;
         }
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -114,7 +140,7 @@ namespace M11_TAS_UI
                 this.DragMove();
         }
 
-        private void Test(IntPtr processHandle)
+        private void DoWork(IntPtr processHandle)
         {
             if (processHandle == IntPtr.Zero)
             {
@@ -224,7 +250,7 @@ namespace M11_TAS_UI
         {
             if (!FindProcess())
             {
-                MessageBox.Show("Unable to find Process and/or Injected Pointers File!");
+                MessageBox.Show("Unable to find Process and/or Injected Pointers File!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             } else
             {
                 btnInitialize.Visibility = Visibility.Collapsed;
@@ -238,7 +264,58 @@ namespace M11_TAS_UI
 
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
-            imgMoveMe.Opacity = 0.02;
+            imgMoveMe.Opacity = 0.05;
+        }
+
+        private void MenuItemExit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void MenuItemOpenRecord_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start("notepad++.exe", filepathToMainRecord);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Notepad++.exe issue: " + ex.Message);
+            }            
+        }
+
+        private void MenuItemOpenFileLoc_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start(filepathToMainRecord.Replace("megaman.rec", ""));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("No filepath yet. Initialize first! Error: " + ex.Message);
+            }            
+        }
+
+        private void ImgMoveMe_ContextMenuOpening(object sender, System.Windows.Controls.ContextMenuEventArgs e)
+        {
+            if (foundProcess)
+            {
+                OpenRecord.IsEnabled = true;
+                OpenFileLoc.IsEnabled = true;
+                ReInject.IsEnabled = true;
+            } else
+            {
+                OpenRecord.IsEnabled = false;
+                OpenFileLoc.IsEnabled = false;
+                ReInject.IsEnabled = false;
+            }
+        }
+
+        private void ReInject_Click(object sender, RoutedEventArgs e)
+        {
+            foundProcess = false;
+            foundInjectedPointers = false;
+            FindProcess();
         }
     }
 }
