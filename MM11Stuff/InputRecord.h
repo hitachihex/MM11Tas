@@ -11,7 +11,6 @@
 
 // Input state bitflags.
 
-
 enum EInputState
 {
 	// for null frames
