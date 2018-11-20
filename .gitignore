@@ -17,7 +17,6 @@
 *.pch
 *.iobj
 *.ipdb
-*.lib
 *.exp
 .vs/
 M11_TAS_UI/obj/
