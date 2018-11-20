@@ -12,6 +12,9 @@ Hotkeys are basic:
 F1 - to pause\start framestep.
 
 F4 - start playback, read from megaman.rec in the directory where the game executable is located.
+Note: You may use multiple input files, see Commands section for input files. But note that multi-level applies<br />
+          from the main input file only, so included input files may not read from another file.
+--------------------------------------------------------
 
 ] - To step one frame (this also reloads the input file so you can make changes to the inputs while framestepping.)<br />
 Note: It won't understep (e.g go backwards and redo) you can only edit a current input or inputs currently not being
@@ -43,6 +46,10 @@ Accepted commands are: <br />
             Block, Acid, Blast, Fuse, Bounce, Torch, Impact, Tundra <br />
     PGear - (for power gear) <br />
     SGear - (for speed gear) <br />
+	Buster -  (goes back to buster costume) <br />
+	Read - accepts a sub command for the input file to read from. <br />
+	       Multi-level files are allowed, but must end in .rec and must be in a folder named  Includes in the main game directory. Example: Read, StageName.rec
+	
 
 
 

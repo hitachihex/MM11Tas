@@ -175,6 +175,7 @@ bool PlaybackManager::ReadMutilLevelInputFile(const char * _szFileName, unsigned
 
 	if (this->m_pSegmentedFile == nullptr)
 	{
+		//DebugOutput("!this->m_pSegmentedFile, null pointer from _fsopen , errno=%u", errno);
 		return false;
 	}
 
