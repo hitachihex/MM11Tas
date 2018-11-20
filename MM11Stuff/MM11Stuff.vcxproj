@@ -81,6 +81,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -165,6 +166,9 @@
       <FixedBaseAddress>true</FixedBaseAddress>
       <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
@@ -202,8 +206,8 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\EasyHookNativePackage.redist.2.7.6789\build\native\EasyHookNativePackage.redist.targets" Condition="Exists('..\packages\EasyHookNativePackage.redist.2.7.6789\build\native\EasyHookNativePackage.redist.targets')" />
     <Import Project="..\packages\EasyHookNativePackage.2.7.6789\build\native\EasyHookNativePackage.targets" Condition="Exists('..\packages\EasyHookNativePackage.2.7.6789\build\native\EasyHookNativePackage.targets')" />
-    <Import Project="..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets" Condition="Exists('..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets')" />
     <Import Project="..\packages\directxtk_desktop_2015.2018.10.31.1\build\native\directxtk_desktop_2015.targets" Condition="Exists('..\packages\directxtk_desktop_2015.2018.10.31.1\build\native\directxtk_desktop_2015.targets')" />
+    <Import Project="..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets" Condition="Exists('..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -211,7 +215,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\EasyHookNativePackage.redist.2.7.6789\build\native\EasyHookNativePackage.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EasyHookNativePackage.redist.2.7.6789\build\native\EasyHookNativePackage.redist.targets'))" />
     <Error Condition="!Exists('..\packages\EasyHookNativePackage.2.7.6789\build\native\EasyHookNativePackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EasyHookNativePackage.2.7.6789\build\native\EasyHookNativePackage.targets'))" />
-    <Error Condition="!Exists('..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets'))" />
     <Error Condition="!Exists('..\packages\directxtk_desktop_2015.2018.10.31.1\build\native\directxtk_desktop_2015.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_2015.2018.10.31.1\build\native\directxtk_desktop_2015.targets'))" />
+    <Error Condition="!Exists('..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FW1FontWrapper.1.1.2017.317\build\native\FW1FontWrapper.targets'))" />
   </Target>
 </Project>
