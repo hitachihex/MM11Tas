@@ -278,7 +278,7 @@ typedef struct t_InputRecord
 		// fiddy six
 		strncpy(this->m_szFromFile, filename, sizeof(this->m_szFromFile) / sizeof(this->m_szFromFile[0]));
 
-		// Does not equal this.
+		// if(filename != megaman.rec)
 		if (strcmpi(filename, "megaman.rec"))
 		{
 			this->m_nInternalLineNo = 0;

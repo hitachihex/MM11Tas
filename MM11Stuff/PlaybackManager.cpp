@@ -118,9 +118,16 @@ XINPUT_STATE * PlaybackManager::GetXInputState()
 	return this->m_pGamePadState;
 }
 
+// shut up c4996
+#pragma warning(disable : 4996)
 PlaybackManager::PlaybackManager(const char *pcszFileName)
 {
-	this->m_bLoading = false;
+	this->m_bLoading = false;;
+
+	// ADDED - Init break state
+	this->m_BreakState.m_nLineNo = -1;
+	strcpy(this->m_BreakState.m_szCurrentFile, this->m_szDefaultFileName);
+
 	// Clear this so it doesn't have junk in it
 	memset(&this->m_szCurrentManagerState[0], 0, 120);
 
@@ -194,21 +201,39 @@ bool PlaybackManager::ReadMutilLevelInputFile(const char * _szFileName, unsigned
 
 		if (indexRunto != std::string::npos)
 		{
+			// ADDED - Setting break state variables
+			strcpy(this->m_BreakState.m_szCurrentFile, _szFileName);
+			this->m_BreakState.m_nLineNo = otherLineCount;
+			this->m_BreakState.m_BreakType = eBreakType::BREAKTYPE_FAST;
+
 			this->m_RuntoLineNo = otherLineCount;
 			// still increase linecount
 			linecount++;
+			otherLineCount++;
+
+
 			continue;
 		}
 		else if (indexWalkto != std::string::npos)
 		{
+			// ADDED - Setting break state variables
+			strcpy(this->m_BreakState.m_szCurrentFile, _szFileName);
+			this->m_BreakState.m_nLineNo = otherLineCount;
+			this->m_BreakState.m_BreakType = eBreakType::BREAKTYPE_NORMAL;
+
 			this->m_WalktoLineNo = otherLineCount;
 			// still increase linecount
 			linecount++;
+			otherLineCount++;
+
+
 			continue;
 		}
 
 		// Ok, we know he is multi leveled because we are inside ReadMultiLevelInputFile.
-		InputRecord * p = new InputRecord(std::string(LineBuffer), linecount, _szFileName, otherLineCount);
+		// why is otherLineCount always == 0?
+
+		InputRecord * p = new InputRecord(std::string(LineBuffer), ++linecount, _szFileName, ++otherLineCount);
 
 		if (p->m_Frames == -1)
 		{
@@ -280,6 +305,10 @@ bool PlaybackManager::ReadInputFile()
 
 		if (indexRunto != std::string::npos)
 		{
+			strcpy(this->m_BreakState.m_szCurrentFile, this->m_szDefaultFileName);
+			this->m_BreakState.m_nLineNo = linecount;
+			this->m_BreakState.m_BreakType = eBreakType::BREAKTYPE_FAST;
+
 			this->m_RuntoLineNo = linecount;
 			// still increase linecount
 			linecount++;
@@ -287,9 +316,14 @@ bool PlaybackManager::ReadInputFile()
 		}
 		else if (indexWalkto != std::string::npos)
 		{
+			strcpy(this->m_BreakState.m_szCurrentFile, this->m_szDefaultFileName);
+			this->m_BreakState.m_nLineNo = linecount;
+			this->m_BreakState.m_BreakType = eBreakType::BREAKTYPE_NORMAL;
+
 			this->m_WalktoLineNo = linecount;
 			// still increase linecount
 			linecount++;
+
 			continue;
 		}
 
@@ -501,6 +535,33 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 			// RNG, other stuff here, etc
 
 
+			// Breakpoints
+			if (this->m_BreakState.m_nLineNo != -1)
+			{
+				if (this->m_BreakState.m_BreakType == eBreakType::BREAKTYPE_NORMAL)
+				{
+					// Check the FILE name the input is from, before we decide to break.
+					
+					if (this->m_pCurrentInput->m_bMultiLevelFile &&
+						!strcmpi(this->m_pCurrentInput->m_szFromFile, this->m_BreakState.m_szCurrentFile) &&
+						this->m_BreakState.m_nLineNo == this->m_pCurrentInput->m_nInternalLineNo)
+					{
+						this->m_BreakState.m_nLineNo = -1;
+						g_bPaused = true;
+					}
+					else
+					{
+						if (this->m_BreakState.m_nLineNo == this->m_pCurrentInput->m_nLineNo && !strcmpi(this->m_pCurrentInput->m_szFromFile, this->m_BreakState.m_szCurrentFile))
+						{
+							this->m_BreakState.m_nLineNo = -1;
+							g_bPaused = true;
+						}
+					}
+
+				}
+			}
+
+			/*
 			if (this->m_RuntoLineNo != -1)
 			{
 				// If we are a multi-level file, we need to compare against internal line number.
@@ -553,7 +614,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 						// set speed here
 					}
 				}
-			}
+			}*/
 
 			this->m_FrameToNext += this->m_pCurrentInput->m_Frames;
 		} // frame to next scope end

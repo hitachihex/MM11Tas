@@ -692,8 +692,9 @@ void DumpPointersForExternalOSD()
 	unsigned long long ** isPlayingBack = (unsigned long long**)&g_pPlaybackManager->m_bPlayingBack;
 	unsigned long long ** pManagerStateString = (unsigned long long**)&g_pPlaybackManager->m_szCurrentManagerState[0];
 	unsigned long long ** mbLoading = (unsigned long long**)&g_pPlaybackManager->m_bLoading;
+	unsigned long long ** gbPaused = (unsigned long long**)&g_bPaused;
 
-	fprintf(pOutFile, "%llx,%llx,%llx,%llx", pPlaybackManager, isPlayingBack, pManagerStateString, mbLoading);
+	fprintf(pOutFile, "%llx,%llx,%llx,%llx,%llx", pPlaybackManager, isPlayingBack, pManagerStateString, mbLoading, gbPaused);
 
 	fclose(pOutFile);
 }

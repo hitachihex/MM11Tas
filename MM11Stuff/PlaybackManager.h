@@ -10,6 +10,26 @@
 
 extern bool g_bPaused;
 
+
+enum eBreakType
+{
+	BREAKTYPE_DEFAULT_NONE=0x0,
+	BREAKTYPE_FAST=1<<0,
+	BREAKTYPE_NORMAL=1<<1
+};
+// We need more than just line no, otherwise it cannot distinguish between input files.
+typedef struct t_BreakState
+{
+	// The file the break is in.
+	char m_szCurrentFile[56];
+
+	// The line number the break is in.
+	unsigned int m_nLineNo;
+
+	// The breakpoint type.
+	eBreakType m_BreakType;
+} BreakState;
+
 class PlaybackManager
 {
 public:
@@ -73,6 +93,9 @@ private:
 	unsigned long m_FrameToNext;
 
 	XINPUT_STATE * m_pGamePadState;
+
+	// TODO: Vectorize break states for multi-break
+	BreakState m_BreakState;
 
 };
 
