@@ -127,6 +127,7 @@ PlaybackManager::PlaybackManager(const char *pcszFileName)
 	this->m_pGamePadState = nullptr;
 	this->m_nTotalFrameCount = 0;
 	this->m_Fp = NULL;
+	this->m_pSegmentedFile = NULL;
 	this->m_bPlayingBack = false;
 
 	if (pcszFileName)
@@ -137,6 +138,95 @@ PlaybackManager::PlaybackManager(const char *pcszFileName)
 	{
 		DebugOutput("null filename in PlaybackManager ctor.");
 	}
+}
+
+// also need to return the line count here no?
+bool PlaybackManager::ReadMutilLevelInputFile(const char * _szFileName, unsigned long otherFileCount, unsigned long* pOutRecordsRead, unsigned long *pOutLinesRead)
+{
+	char LineBuffer[2048] = { 0 };
+	unsigned int linecount = otherFileCount;
+
+	unsigned int otherLineCount = 0;
+
+	if (this->m_pSegmentedFile)
+	{
+		fclose(this->m_pSegmentedFile);
+		this->m_pSegmentedFile = nullptr;
+	}
+
+	this->m_pSegmentedFile = _fsopen(_szFileName, "r", _SH_DENYNO);
+
+	if (this->m_pSegmentedFile == nullptr)
+	{
+		return false;
+	}
+
+	rewind(this->m_pSegmentedFile);
+
+	while (true)
+	{
+		if (fgets(LineBuffer, 2048, this->m_pSegmentedFile) == NULL)
+			break;
+
+		LineBuffer[strcspn(LineBuffer, "\n")] = 0;
+
+		if (strlen(LineBuffer) == 0)
+		{
+			++linecount;
+			++otherLineCount;
+			memset(LineBuffer, 0, sizeof(LineBuffer) / sizeof(LineBuffer[0]));
+			continue;
+		}
+
+		if (LineBuffer[0] == '#')
+		{
+			++linecount;
+			++otherLineCount;
+			memset(LineBuffer, 0, sizeof(LineBuffer) / sizeof(LineBuffer[0]));
+			continue;
+		}
+
+		std::string stringBuffer(LineBuffer);
+
+		unsigned long long indexRunto = stringBuffer.find("Runto");
+		unsigned long long  indexWalkto = stringBuffer.find("Walkto");
+
+
+		if (indexRunto != std::string::npos)
+		{
+			this->m_RuntoLineNo = otherLineCount;
+			// still increase linecount
+			linecount++;
+			continue;
+		}
+		else if (indexWalkto != std::string::npos)
+		{
+			this->m_WalktoLineNo = otherLineCount;
+			// still increase linecount
+			linecount++;
+			continue;
+		}
+
+		// Ok, we know he is multi leveled because we are inside ReadMultiLevelInputFile.
+		InputRecord * p = new InputRecord(std::string(LineBuffer), linecount, _szFileName, otherLineCount);
+
+		if (p->m_Frames == -1)
+		{
+			delete p;
+			memset(LineBuffer, 0, sizeof(LineBuffer) / sizeof(LineBuffer[0]));
+			continue;
+		}
+
+		this->m_nTotalFrameCount += p->m_Frames;
+		this->m_Inputs.push_back(p);
+		++*pOutRecordsRead;
+		memset(LineBuffer, 0, sizeof(LineBuffer) / sizeof(LineBuffer[0]));
+	}
+
+	fclose(this->m_pSegmentedFile);
+	this->m_pSegmentedFile = nullptr;
+
+	return true;
 }
 
 bool PlaybackManager::ReadInputFile()
@@ -185,6 +275,9 @@ bool PlaybackManager::ReadInputFile()
 		std::string stringBuffer(LineBuffer);
 		unsigned long long indexRunto = stringBuffer.find("Runto");
 		unsigned long long  indexWalkto = stringBuffer.find("Walkto");
+
+		unsigned long long indexRead = stringBuffer.find("Read");
+
 		if (indexRunto != std::string::npos)
 		{
 			this->m_RuntoLineNo = linecount;
@@ -201,7 +294,38 @@ bool PlaybackManager::ReadInputFile()
 		}
 
 
-		InputRecord * p = new InputRecord(std::string(LineBuffer), ++linecount);
+		/* TODO:
+
+		   Flesh this shit out!
+		
+		*/
+		if (indexRead != std::string::npos)
+		{
+			// Should I just.. do the same thing but read from this file?
+			unsigned long long indexOfDelimeter = stringBuffer.find(",");
+			if (indexOfDelimeter != std::string::npos)
+			{
+				// ok, everything after this should be the filename
+				std::string fileName = stringBuffer.substr(indexOfDelimeter + 1);
+				linecount++;
+
+				// NOTE: This probably completely destroys current Walkto implementation!
+				unsigned long inRecordsRead = 0;
+				unsigned long outLinesRead = 0;
+				bool multiResult = this->ReadMutilLevelInputFile(fileName.c_str(), linecount, &inRecordsRead, &outLinesRead);
+
+				if (multiResult)
+					DebugOutput("Read %u InputRecords from %s.", inRecordsRead, fileName.c_str());
+				else
+					DebugOutput("Couldn't read multi level input file %s.", fileName.c_str());
+
+				continue;
+			}
+			
+		}
+
+
+		InputRecord * p = new InputRecord(std::string(LineBuffer), ++linecount, this->m_szDefaultFileName, 0);
 
 		// invalid InputRecord.
 		if (p->m_Frames == -1)
@@ -379,26 +503,55 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 
 			if (this->m_RuntoLineNo != -1)
 			{
-				if (m_pCurrentInput->m_nLineNo < this->m_RuntoLineNo)
+				// If we are a multi-level file, we need to compare against internal line number.
+				if (m_pCurrentInput->m_bMultiLevelFile)
 				{
-					;
+					if (m_pCurrentInput->m_nInternalLineNo < this->m_RuntoLineNo)
+						;
+					else
+					{
+						this->m_WalktoLineNo = -1;
+						g_bPaused = true;
+
+					}
 				}
 				else
 				{
-					this->m_RuntoLineNo = -1;
-					g_bPaused = true;
-					// set speed here
+					if (m_pCurrentInput->m_nLineNo < this->m_RuntoLineNo)
+					{
+						;
+					}
+					else
+					{
+						this->m_RuntoLineNo = -1;
+						g_bPaused = true;
+						// set speed here
+					}
 				}
 			}
 			else if (this->m_WalktoLineNo != -1)
 			{
-				if (m_pCurrentInput->m_nLineNo < this->m_WalktoLineNo)
-					;
+				if (m_pCurrentInput->m_bMultiLevelFile)
+				{
+					if (m_pCurrentInput->m_nInternalLineNo < this->m_WalktoLineNo)
+						;
+					else
+					{
+						this->m_WalktoLineNo = -1;
+						g_bPaused = true;
+
+					}
+				}
 				else
 				{
-					this->m_WalktoLineNo = -1;
-					g_bPaused = true;
-					// set speed here
+					if (m_pCurrentInput->m_nLineNo < this->m_WalktoLineNo)
+						;
+					else
+					{
+						this->m_WalktoLineNo = -1;
+						g_bPaused = true;
+						// set speed here
+					}
 				}
 			}
 
@@ -422,8 +575,15 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 		m_pCurrentInput->GetRecordState(pxInpState);
 
 		// Done / Frames
-		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
-			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame,this->m_nTotalFrameCount);
+		//sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+			//this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame,this->m_nTotalFrameCount);
+
+
+		sprintf(this->m_szCurrentManagerState, "[%s]-Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)",
+			this->m_pCurrentInput->m_szFromFile,
+			(m_pCurrentInput->m_bMultiLevelFile) ? this->m_pCurrentInput->m_nInternalLineNo : this->m_pCurrentInput->m_nLineNo,
+			this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount);
 
 		// Packet number is our current frame.
 		pxInpState->dwPacketNumber = this->m_CurrentFrame;

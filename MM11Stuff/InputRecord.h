@@ -47,6 +47,13 @@ typedef struct t_InputRecord
 
 	unsigned long long m_nLineNo;
 
+	// For multi-level input files.
+	unsigned long long m_nInternalLineNo;
+
+	bool m_bMultiLevelFile;
+
+	char m_szFromFile[56];
+
 	std::map<std::string, std::pair<signed short, signed short>> m_WeaponSelectMapping = {
 		{"Block", std::make_pair(-1*32768, 1*32767)},
 		{"Acid",  std::make_pair(0, 1*32767)},
@@ -266,8 +273,20 @@ typedef struct t_InputRecord
 		this->m_InputState = state;
 	}
 
-	t_InputRecord(std::string line, unsigned int ln)
+#pragma warning(disable: 4996)
+	t_InputRecord(std::string line, unsigned int ln, const char*filename, unsigned int otherln)
 	{
+		// fiddy six
+		strncpy(this->m_szFromFile, filename, sizeof(this->m_szFromFile) / sizeof(this->m_szFromFile[0]));
+
+		// Does not equal this.
+		if (strcmpi(filename, "megaman.rec"))
+		{
+			this->m_nInternalLineNo = 0;
+			this->m_bMultiLevelFile = true;
+		}
+
+		this->m_nInternalLineNo = otherln;
 		this->m_nLineNo = ln;
 		this->m_Done = 0;
 

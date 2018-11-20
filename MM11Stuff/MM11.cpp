@@ -478,6 +478,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		}
 	}
 
+
 	// Game speed hotkey, increase
 	if (GetAsyncKeyState(VK_ADD) & 1)
 	{
@@ -571,9 +572,7 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 		DWORD dwOldProt;
 		VirtualProtect((LPVOID)&g_pVtable[2], 0x8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 
-		DebugOutput("Wat, before g_pVtable set.");
 		g_pVtable[6] = (unsigned long long)GameLoop_Hook;
-		DebugOutput("after g_pVtable set.");
 
 		DebugOutput("Hooked GameLoop via vtable.");
 

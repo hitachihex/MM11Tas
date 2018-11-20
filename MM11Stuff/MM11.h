@@ -11,6 +11,8 @@
 #include "DebugUtils.h"
 
 
+#define RADICAL_ED 1
+
 #define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
                                 extern oComInitOriginal##num original_ComInit##num;
 

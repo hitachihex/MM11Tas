@@ -24,6 +24,8 @@ public:
 
 	unsigned long ReloadPlayback();
 
+	bool ReadMutilLevelInputFile(const char*, unsigned long, unsigned long*, unsigned long*);
+
 	bool ReadInputFile();
 
 	void InitPlayback(bool);
@@ -54,11 +56,15 @@ public:
 protected:
 private:
 
+	const char * m_szDefaultFileName = "megaman.rec";
+
 	std::vector<InputRecord*> m_Inputs;
 
 	unsigned long m_InputIndex;
 
 	FILE * m_Fp;
+
+	FILE * m_pSegmentedFile;
 
 	unsigned long long m_RuntoLineNo;
 

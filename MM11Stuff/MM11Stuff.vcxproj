@@ -174,6 +174,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputRecord.h" />
     <ClInclude Include="MM11.h" />
+    <ClInclude Include="MTFrameworkEngine.h" />
     <ClInclude Include="PlaybackManager.h" />
     <ClInclude Include="SMain.h" />
     <ClInclude Include="stdafx.h" />

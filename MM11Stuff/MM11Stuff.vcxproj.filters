@@ -54,6 +54,9 @@
     <ClInclude Include="DebugUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MTFrameworkEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
