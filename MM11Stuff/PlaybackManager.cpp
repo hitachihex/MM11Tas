@@ -127,7 +127,6 @@ PlaybackManager::PlaybackManager(const char *pcszFileName)
 	// ADDED - Init break state
 	this->m_BreakState.m_nLineNo = -1;
 	strcpy(this->m_BreakState.m_szCurrentFile, this->m_szDefaultFileName);
-
 	// Clear this so it doesn't have junk in it
 	memset(&this->m_szCurrentManagerState[0], 0, 120);
 
@@ -136,6 +135,12 @@ PlaybackManager::PlaybackManager(const char *pcszFileName)
 	this->m_Fp = NULL;
 	this->m_pSegmentedFile = NULL;
 	this->m_bPlayingBack = false;
+
+	auto nLen = GetModuleFileNameA(nullptr, this->m_szCurrentDirectory, 256); 
+	this->m_CWD.assign(this->m_szCurrentDirectory);
+	auto indexOfLastBackSlash = this->m_CWD.rfind("\\");
+	this->m_CWD.erase(indexOfLastBackSlash + 1, this->m_CWD.length() - indexOfLastBackSlash + 1);
+	this->m_CWD += "\\Includes\\";
 
 	if (pcszFileName)
 	{
@@ -161,7 +166,12 @@ bool PlaybackManager::ReadMutilLevelInputFile(const char * _szFileName, unsigned
 		this->m_pSegmentedFile = nullptr;
 	}
 
-	this->m_pSegmentedFile = _fsopen(_szFileName, "r", _SH_DENYNO);
+	std::string pathToCurrentFile = this->m_CWD;
+	pathToCurrentFile += _szFileName;
+
+	DebugOutput("PathToCurrentFile = %s", pathToCurrentFile.c_str());
+
+	this->m_pSegmentedFile = _fsopen(pathToCurrentFile.c_str(), "r", _SH_DENYNO);
 
 	if (this->m_pSegmentedFile == nullptr)
 	{

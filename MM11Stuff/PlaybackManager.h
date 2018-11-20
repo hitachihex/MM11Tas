@@ -97,6 +97,14 @@ private:
 	// TODO: Vectorize break states for multi-break
 	BreakState m_BreakState;
 
+	/*char szCurrentDirectory[256] = { 0 };
+	auto nLen = GetModuleFileNameA(nullptr, szCurrentDirectory, 256);
+	std::string cwd(szCurrentDirectory);*/
+
+	char m_szCurrentDirectory[256];
+
+	std::string m_CWD;
+
 };
 
 extern PlaybackManager * g_pPlaybackManager;
