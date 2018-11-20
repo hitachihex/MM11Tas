@@ -5,17 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:M11_TAS_UI"
         mc:Ignorable="d"
-        Title="MM11 TAS UI" Height="382.881" Width="800" ResizeMode="CanMinimize" Topmost="True" WindowStyle="None" AllowsTransparency="True" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen">
+        Title="MM11 TAS UI" Height="382.881" Width="800" ResizeMode="CanMinimize" Topmost="True" WindowStyle="None" AllowsTransparency="True" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen" Icon="mm11tas.ico">
     <Window.Background>
         <SolidColorBrush Opacity="0" Color="White"/>
     </Window.Background>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="51*"/>
-            <ColumnDefinition Width="109*"/>
-        </Grid.ColumnDefinitions>
-        <Label x:Name="lblmyinfo" Content="No Game Found Yet" HorizontalAlignment="Left" VerticalAlignment="Top" Width="749" FontFamily="Verdana" FontSize="18" Foreground="#FFFFFF0B" Height="325" Margin="28,10,0,0" Grid.ColumnSpan="2"/>
+    <Grid Margin="0,0,-509,0">
+        <Label x:Name="lblmyinfo" Content="MM11 Not Running" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1271" FontFamily="Verdana" FontSize="18" Foreground="#FFFFFF0B" Height="363" Margin="28,10,0,0"/>
         <Button x:Name="btnInitialize" Content="Initialize" HorizontalAlignment="Left" Margin="76,40,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <Image x:Name="imgMoveMe" Source="pack://application:,,,/images/4-direction.png" HorizontalAlignment="Right" Height="28" VerticalAlignment="Top" Width="28" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Margin="0,0,226.746,0"/>
+        <Image x:Name="imgMoveMe" HorizontalAlignment="Right" Height="28" VerticalAlignment="Top" Width="28" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Margin="0,0,1281,0" Source="images/4-direction.png"/>
     </Grid>
 </Window>

@@ -39,6 +39,7 @@ namespace M11_TAS_UI
         private UInt64 ptrIsPlayingBack = 0;
         private UInt64 ptrPlaybackMangerStringState = 0;
         private UInt64 ptrIsLoading = 0;
+        private UInt64 ptrIsPaused = 0;
         private string filepathToPointerRef = string.Empty;
 
         private bool FindProcess()
@@ -70,6 +71,7 @@ namespace M11_TAS_UI
                         UInt64.TryParse(pointers[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrIsPlayingBack);
                         UInt64.TryParse(pointers[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrPlaybackMangerStringState);
                         UInt64.TryParse(pointers[3], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrIsLoading);
+                        UInt64.TryParse(pointers[4], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrIsPaused);
                         foundInjectedPointers = true;
                     }
                     catch (Exception e)
@@ -89,7 +91,7 @@ namespace M11_TAS_UI
                 processHandle = IntPtr.Zero;
                 foundProcess = false;
                 foundInjectedPointers = false;
-                lblmyinfo.Content = "No Game Found Yet";
+                lblmyinfo.Content = "MM11 Not Running";
                 btnInitialize.Visibility = Visibility.Visible;
             }
 
@@ -150,26 +152,35 @@ namespace M11_TAS_UI
             Int32 roomID = BitConverter.ToInt32(ReadValue(myStuff + 0x78C, 4), 0);
 
             bool isPlayingBack = BitConverter.ToBoolean(ReadValue(ptrIsPlayingBack, 1), 0);
+            bool isPaused = BitConverter.ToBoolean(ReadValue(ptrIsPaused, 1), 0);
             //bool isLoading = BitConverter.ToBoolean(ReadValue(ptrIsLoading, 1), 0);
-
-            bool isLoading = BitConverter.ToBoolean(ReadValue(ReadAddress(myBase + ptrIsLoading, new UInt32[] { 0 }), 1), 0);
-
-            string myString = String.Empty;
+            
+            string playbackString = String.Empty;
             if (isPlayingBack)
             {
-                myString = System.Text.Encoding.UTF8.GetString(ReadValue(ptrPlaybackMangerStringState, 120));
-                for (int i = 0; i < myString.Length; i++)
+                playbackString = System.Text.Encoding.UTF8.GetString(ReadValue(ptrPlaybackMangerStringState, 120));
+                for (int i = 0; i < playbackString.Length; i++)
                 {
-                    if (myString[i] == 0)
+                    if (playbackString[i] == 0)
                     {
                         //Console.WriteLine("i: " + i);
-                        myString = myString.Remove(i, 120 - i);
+                        playbackString = playbackString.Remove(i, 120 - i);
                         break;
                     }
                 }
             }
 
-            lblmyinfo.Content = "Pos: " + myXPos + ", " + myYPos + " \nXVelocity: " + myXVel + " | YVelocity: " + myYVel + " \nHP: " + myHP + " | BossHP: " + bossHP + " \nRobo Stage: " + roboStage + " | Wily Stage: " + wilyStage + " | RoomID: " + roomID + " \nisPlayingBack: " + isPlayingBack + " | isLoading: " + isLoading +  " \n" + myString;
+            string stage = string.Empty;
+            if (roboStage != 4)
+            {
+                stage = " \nRobo Stage: " + roboStage;
+            }
+            else
+            {
+                stage = " \nWily Stage: " + wilyStage;
+            }
+
+            lblmyinfo.Content = "Pos: " + myXPos + ", " + myYPos + " | X-Velocity: " + myXVel + " | Y-Velocity: " + myYVel + " | HP: " + myHP + " | BossHP: " + bossHP + stage + " | RoomID: " + roomID + " \nisPlayingBack: " + isPlayingBack + " | isPaused: " + isPaused +  " \n" + playbackString;
         }
 
         private Byte[] ReadValue(UInt64 address, int size)
