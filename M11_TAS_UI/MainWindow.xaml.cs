@@ -55,19 +55,25 @@ namespace M11_TAS_UI
                         filepathToMainRecord = process.MainModule.FileName.Replace("game.exe", "megaman.rec");
                         try
                         {
-                            Process.Start("MM11Injector.exe");
+                            Process injector = Process.Start("MM11Injector.exe");
                             Console.WriteLine("Started MM11Injector.exe!");
-                            Thread.Sleep(1500);
-                            foundProcess = true;
+                            injector.WaitForExit();
+                            if (injector.ExitCode == 0)
+                            {
+                                foundProcess = true;
+                            }
                         }
                         catch (Exception)
                         {
                             try
                             {
-                                Process.Start(@"..\..\..\x64\Release\MM11Injector.exe");
+                                Process injector = Process.Start(@"..\..\..\x64\Release\MM11Injector.exe");
                                 Console.WriteLine("Oh hi! You must be debugging. Started MM11Injector.exe!");
-                                Thread.Sleep(1500);
-                                foundProcess = true;
+                                injector.WaitForExit(); ;
+                                if (injector.ExitCode == 0)
+                                {
+                                    foundProcess = true;
+                                }
                             }
                             catch (Exception e)
                             {
@@ -180,7 +186,7 @@ namespace M11_TAS_UI
             bool isPlayingBack = BitConverter.ToBoolean(ReadValue(ptrIsPlayingBack, 1), 0);
             bool isPaused = BitConverter.ToBoolean(ReadValue(ptrIsPaused, 1), 0);
             //bool isLoading = BitConverter.ToBoolean(ReadValue(ptrIsLoading, 1), 0);
-            
+
             string playbackString = String.Empty;
             if (isPlayingBack)
             {
@@ -206,7 +212,7 @@ namespace M11_TAS_UI
                 stage = " \nWily Stage: " + wilyStage;
             }
 
-            lblmyinfo.Content = "Pos: " + myXPos + ", " + myYPos + " | X-Velocity: " + myXVel + " | Y-Velocity: " + myYVel + " | HP: " + myHP + " | BossHP: " + bossHP + stage + " | RoomID: " + roomID + " \nisPlayingBack: " + isPlayingBack + " | isPaused: " + isPaused +  " \n" + playbackString;
+            lblmyinfo.Content = "Pos: " + myXPos + ", " + myYPos + " | X-Velocity: " + myXVel + " | Y-Velocity: " + myYVel + stage + " | RoomID: " + roomID + " | HP: " + myHP + " | BossHP: " + bossHP + " \nisPlayingBack: " + isPlayingBack + " | isPaused: " + isPaused + " \n" + playbackString;
         }
 
         private Byte[] ReadValue(UInt64 address, int size)
@@ -251,7 +257,8 @@ namespace M11_TAS_UI
             if (!FindProcess())
             {
                 MessageBox.Show("Unable to find Process and/or Injected Pointers File!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            } else
+            }
+            else
             {
                 btnInitialize.Visibility = Visibility.Collapsed;
             }
@@ -281,7 +288,7 @@ namespace M11_TAS_UI
             catch (Exception ex)
             {
                 Console.WriteLine("Notepad++.exe issue: " + ex.Message);
-            }            
+            }
         }
 
         private void MenuItemOpenFileLoc_Click(object sender, RoutedEventArgs e)
@@ -293,7 +300,7 @@ namespace M11_TAS_UI
             catch (Exception ex)
             {
                 Console.WriteLine("No filepath yet. Initialize first! Error: " + ex.Message);
-            }            
+            }
         }
 
         private void ImgMoveMe_ContextMenuOpening(object sender, System.Windows.Controls.ContextMenuEventArgs e)
@@ -303,7 +310,8 @@ namespace M11_TAS_UI
                 OpenRecord.IsEnabled = true;
                 OpenFileLoc.IsEnabled = true;
                 ReInject.IsEnabled = true;
-            } else
+            }
+            else
             {
                 OpenRecord.IsEnabled = false;
                 OpenFileLoc.IsEnabled = false;
