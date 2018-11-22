@@ -445,6 +445,8 @@ void ForceGameOver(unsigned long long argRcx)
 
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
+	MTFramework::MainGame * _this = (MTFramework::MainGame*)(ecx);
+
 	static bool bOnce = false;
 
 	if (!bOnce)
@@ -487,6 +489,25 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 			DebugOutput("Toggled g_bPlaybackSync.");
 		}
 	}
+	
+#ifdef RADICAL_ED
+	/*
+	if (GetAsyncKeyState(VK_F5) & 1)
+	{
+		auto m_pCamera = _this->m_pCamera;
+		for (unsigned int i = 0; i < 9; i++)
+		{
+			auto pCamera = &m_pCamera->m_Cameras[i];
+
+			if (pCamera->m_pScreenStuff)
+			{
+				pCamera->m_DisplayType = MTFramework::eCameraDisplayType::CDT_BOTTOM_STRETCHED;
+			}
+		}
+
+	}*/
+#endif
+
 
 	// Game speed hotkey, increase
 	if (GetAsyncKeyState(VK_ADD) & 1)

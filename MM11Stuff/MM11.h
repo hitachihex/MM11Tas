@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <Xinput.h>
 #include <dinput.h>
+#include "MTFramework.h"
 #include "Utils.h"
 #include "DebugUtils.h"
 
