@@ -92,6 +92,8 @@ extern bool IsLoading(unsigned long long);
 
 extern void InitFastForward();
 
+//extern void ForceGameOver(unsigned long long);
+
 extern unsigned long __fastcall TimeGetTime_Hook();
 extern bool __fastcall QueryPerformanceCounter_Hook(LARGE_INTEGER*);
 extern unsigned long __fastcall GetTickCount_Hook();

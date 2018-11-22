@@ -433,6 +433,16 @@ bool IsLoading(unsigned long long argRcx)
 	return false;
 }
 
+void ForceGameOver(unsigned long long argRcx)
+{
+	//unsigned long long *_RBX = (unsigned long long*)(&*(unsigned long long*)((unsigned long)argRcx + 0x7048));
+	//unsigned long long _RCX = *_RBX;
+
+#define CallGameOver(e) ((void(__thiscall*)(unsigned long long))0x140075E28)(e);
+
+	CallGameOver(argRcx);
+}
+
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
 	static bool bOnce = false;
@@ -477,7 +487,6 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 			DebugOutput("Toggled g_bPlaybackSync.");
 		}
 	}
-
 
 	// Game speed hotkey, increase
 	if (GetAsyncKeyState(VK_ADD) & 1)
