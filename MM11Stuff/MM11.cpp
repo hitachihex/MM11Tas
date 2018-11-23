@@ -443,6 +443,7 @@ void ForceGameOver(unsigned long long argRcx)
 	CallGameOver(argRcx);
 }
 
+//#pragma optimize("", off)
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
 	MTFramework::MainGame * _this = (MTFramework::MainGame*)(ecx);
@@ -492,8 +493,23 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	
 #ifdef RADICAL_ED
 	
+	
 	if (GetAsyncKeyState(VK_F5) & 1)
 	{
+		/*
+		auto pColMgr = &_this->m_pCollision->m_CollManager;
+		for (unsigned int i = 0; i < pColMgr->m_NumObjects; i++)
+		{
+			auto obj = &*pColMgr->m_pCollObjects[i];
+			auto data = obj->m_pObjInstance->m_pObjectData;
+
+			if (data && obj->m_pObjInstance->m_bUnk0D)
+			{
+				DebugOutput("Obj %u is at X %f", i, data->m_PositionX);
+			}
+		}*/
+
+
 		/*
 		auto m_pCamera = _this->m_pCamera;
 		for (unsigned int i = 0; i < 9; i++)
@@ -600,6 +616,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	}
 
 }
+//#pragma optimize("", on)
 
 void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 {

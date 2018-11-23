@@ -274,6 +274,184 @@ namespace MTFramework
 
 	};
 
+	class Resources
+	{
+	public:
+		// 0x00 - 0x07
+		unsigned long long m_Vtable;
+
+	protected:
+	private:
+
+	};
+
+
+
+	// cGeometryArray
+	class MTCollisionObjectData
+	{
+	public:
+		// 0x00 - 0x07
+		unsigned long long m_Vtable;
+
+		// 0x08 - 0x4F
+		unsigned char m_ucUnknown[0x50 - 0x08];
+
+		// 0x50 - 0x53
+		float m_PositionX;
+
+		// 0x54 - 0x57
+		float m_PositionY;
+
+		// 0x58 - 0x5B
+		float m_PositionZ;
+
+	protected:
+	private:
+
+	};
+
+	class MtCollisionObjectInstance
+	{
+	public:
+
+		// 0x00 - 0x07
+		unsigned long long m_Vtable;
+
+		// 0x08 - 0x0B
+		unsigned long  m_dwUnknown08_0B;
+
+		// 0x0C - 0x3F
+		unsigned char m_ucUnknown[0x40 - 0x0C];
+
+		// 0x40 - 0x47
+		MTCollisionObjectData * m_pObjectData;
+
+		// 0x48 - 0x15F
+		unsigned char m_ucUnknown0048_0015F[0x160 - 0x48];
+
+		// 0x160
+		bool m_bUnk00;
+
+		// 0x161
+		bool m_bUnk01;
+
+		// 0x162
+		bool m_bUnk02;
+
+		// 0x163
+		bool m_bUnk03;
+
+		// 0x164
+		bool m_bUnk04;
+
+		// 0x165
+		bool m_bUnk05;
+
+		// 0x166
+		bool m_bUnk06;
+
+		// 0x167
+		bool m_bUnk07;
+
+		// 0x168
+		bool m_bUnk08;
+
+		// 0x169
+		bool m_bUnk09;
+
+		// 0x16A
+		bool m_bUnk0A;
+
+		// 0x16B
+		bool m_bUnk0B;
+
+		// 0x16C
+		bool m_bUnk0C;
+
+		// 0x16D
+		bool m_bUnk0D;
+
+	protected:
+	private:
+
+	};
+
+	class MTCollisionObjects
+	{
+	public:
+		// 0x00 - 0x07
+		unsigned long long m_Vtable;
+
+		// 0x08 - 0x0B
+		unsigned long m_dwUnknown08_0B;
+
+		// 0x0C - 0x0F
+		unsigned long m_dwUnknown0C_0F;
+
+		// 0x10 - 0x17
+		MtCollisionObjectInstance * m_pObjInstance;
+	protected:
+	private:
+
+	};
+
+	class CollisionManager
+	{
+	public:
+
+		// 0x00 - 0x07
+		unsigned long long m_Vtable;
+
+		// 0x08 - 0x47
+		unsigned char m_ucUnknown[0x48 - 0x08];
+
+		// 0x48 - 0x4B
+		// mov eax, dword ptr ds:[rbx+0x48]
+		unsigned long m_NumObjects;
+
+		// 0x4C - 0x4F
+		unsigned long m_dwUnknown004C_004F;
+
+		// 0x50 - 0x53
+		unsigned long m_dwUnknown0050_0053;
+
+		// 0x54 - 0x57
+		unsigned long m_dwUnknown0054_0057;
+
+		// 0x58 - 0x5F
+		MTCollisionObjects ** m_pCollObjects;
+
+		// ..
+		// xor edi, edi                        - objIndex = 0
+		// mov rax, qword ptr ds:[rbx+0x58]    - objects
+		// mov rcx, qword ptr ds:[rax+rdi]     - objects[objIndex]
+		// mov rcx, qword ptr ds:[rcx+0x10]    - more offsetting
+	protected:
+	private:
+	};
+
+	class Collision
+	{
+	public:
+		// 0x00 - 0x07
+		unsigned long long m_Vtable;
+
+		// 0x08 - 0x2F
+		CRITICAL_SECTION m_CriticalSection;
+
+		// 0x30 - 0x43B7
+		unsigned char m_ucUnknown0030_043B7[0x43B8 - 0x30];
+
+		// Need a lea? then
+		// 0x43B8 - 0x????
+		CollisionManager m_CollManager;
+
+	protected:
+	private:
+
+	};
+
 	class MainGame
 	{
 	public:
@@ -285,10 +463,19 @@ namespace MTFramework
 		Unit * m_pUnit;
 
 		// 0x401B0 - 0x401B7
-		unsigned long long m_dwUnknown401B0_401B7;
+		Resources * m_pResource;
 
 		// 0x401B8 - 0x401BF
 		Overmap * m_pCamera;
+
+		// 0x401C0 - 0x401C7
+		unsigned long long m_qwUnknown401C0_401C7;
+
+		// 0x401C8 - 0x401CF
+		unsigned long long m_qwUnknown401C8_401CF;
+
+		// 0x401D0 - 0x401D7
+		Collision * m_pCollision;
 
 	protected:
 	private:
