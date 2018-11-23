@@ -25,13 +25,52 @@ namespace MTFramework
 	class ScreenStuff
 	{
 		// 0x00 - 0x07
-		// m_Vtable[9] - Deals with positions and stuff.
+		/*
+		virtual void _A() = 0;											-  table[0]
+		virtual void _B() = 0;											-  table[1]
+		virtual void _C() = 0;											-  table[2]
+		virtual void _D() = 0;											-  table[3]
+		virtual void _E() = 0;											-  table[4]
+		virtual void _F() = 0;											-  table[5]
+		virtual void _G() = 0;											-  table[6]
+		virtual void _H() = 0;											-  table[7]
+		virtual void _I() = 0;											-  table[8]
+		virtual void _J() = 0;											-  table[9]   
+		virtual void _K() = 0;											-  table[10]
+		virtual void _L() = 0;											-  table[11]
+		virtual void _M() = 0;											-  table[12]
+		virtual void _N() = 0;											-  table[13]
+		virtual void _O() = 0;											-  table[14]
+		virtual void _P() = 0;											-  table[15]
+		virtual void _Q() = 0;											-  table[16]
+		virtual void _R() = 0;											-  table[17]
+		virtual void HandleCameraStuff(unsigned long long* rdx) = 0;	-  table[18] - Deals with position and stuff.
+		virtual void HandleCameraStuff2(unsigned long long* rdx) = 0;	-  table[19] - No idea what it does, but stuff.
+		*/
 		unsigned long long m_Vtable;
 
 		// 0x08 - 0x0F
 		unsigned long long m_qwUnknown08_0F;
 
 		// 0x10 - 0x13
+		/*
+		   mov eax, dword ptr ds:[rdi+0x10]
+		   and eax, 0x07
+		   dec eax
+		   cmp eax, 1
+		   jbe game.1403a0103
+
+		   // Remove bits?
+		   this->m_dwMaskUnknown_10_13 &= 0x07;
+
+		   // Decrease?
+		   this->m_dwMaskUnknown_10_13--;
+
+		   if(this->m_dwMaskUnknown <= 1)
+		      ; ??
+
+	       Apparently determines if the class has a Critical Section object?
+		*/
 		unsigned long  m_dwMaskUnknown_10_13;
 
 		// 0x14 - 0x47
@@ -78,6 +117,11 @@ namespace MTFramework
 
 	};
 
+	class UnknownCameraClass00
+	{
+		// 0x00 - 0x07
+		unsigned long long m_qwVtable;
+	};
 
 	class GameCamera
 	{
@@ -90,7 +134,8 @@ namespace MTFramework
 		unsigned char m_ucUnknown08_4F[0x50 - 0x08];
 
 		// 0x50 - 0x57
-		unsigned long long m_qwClassPtr;
+		//unsigned long long m_qwClassPtr;
+		UnknownCameraClass00 * m_pCameraClassUnknown00;
 
 		// 0x58 - 0x5F
 		// Lol, this is terrible name for this.
@@ -163,12 +208,84 @@ namespace MTFramework
 
 	};
 
+	// I've really no idea what it's name is.
+	class MTUnitObject
+	{
+	public:
+
+		// 0x00 - 0x07
+		unsigned long long m_Vtable;
+
+		// 0x08 - 0x30
+		unsigned char m_ucUnknown08_30[0x30 - 0x08];
+
+	protected:
+	private:
+
+	};
+
+	class Unit
+	{
+	public:
+		// 0x00 - 0x07
+
+		//vtable[6]  - Dunno
+		//vtable[9]  - Does the meat of it
+		//vtable[10] - Does the meat of it
+		//vtable[11] - Dunno
+		//vtable[12] - Does the meat of it
+		//vtable[13] - Dunno
+		unsigned long long m_Vtable;
+
+
+		// 0x06 * 0x08 = 0x30
+
+
+		// lea r8, qword ptr ds:[r9+r9*2],   - objCount=r8
+		// add r8, r8                        - objCount+=objCount
+		// mov eax, dword ptr ds:[this+objCount*8+0x48]
+		// shr eax, 0x01
+		// test al, 0x01
+		// jne game.140372846
+		// mov qword ptr ss:[rsp+0x50], rbx  - localScopeQword=objectCount
+		// lea rax, qword ptr ds:[r9+0x02]   - r9 += 0x02;
+		// mov rbx, qword ptr ds:[this+objCount*8+0x50]  - .
+		// lea rax, qword ptr ds:[rax+rax*2] - rax *= 0x03;
+		// add rax, rax
+		// movaps xmmword ptr ss:[rsp+0x20], xmm6    - localScopeDouble = xmm6
+		// ...
+		// ...
+		// test rbx, rbx                     - !object
+		// je game.14037283C                 - we have null, can't process this object at this index.
+
+		// (this + (objCount+objCount*0x08+0x50))
+
+		// 0x08 - 0x4F
+		unsigned char m_ucUnknown08_4F[0x50 - 0x08];
+
+		// 0x50 - ??
+		MTUnitObject * m_pObjects;
+
+		static constexpr unsigned long long _UnitManagerPointer = 0x140C3EF58;
+		static constexpr unsigned int       NumObjectsToIterateOffset = 0xC38;
+
+	protected:
+	private:
+
+	};
+
 	class MainGame
 	{
 	public:
 
-		// 0x00 - 0x401B7
-		unsigned char m_ucUnknown0000_401B7[0x401B8 - 0x0];
+		// 0x00 - 0x401A7
+		unsigned char m_ucUnknown0000_401B7[0x401A8 - 0x0];
+
+		// 0x401A8 - 0x401AF
+		Unit * m_pUnit;
+
+		// 0x401B0 - 0x401B7
+		unsigned long long m_dwUnknown401B0_401B7;
 
 		// 0x401B8 - 0x401BF
 		Overmap * m_pCamera;

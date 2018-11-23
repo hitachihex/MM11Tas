@@ -491,9 +491,10 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	}
 	
 #ifdef RADICAL_ED
-	/*
+	
 	if (GetAsyncKeyState(VK_F5) & 1)
 	{
+		/*
 		auto m_pCamera = _this->m_pCamera;
 		for (unsigned int i = 0; i < 9; i++)
 		{
@@ -503,9 +504,21 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 			{
 				pCamera->m_DisplayType = MTFramework::eCameraDisplayType::CDT_BOTTOM_STRETCHED;
 			}
-		}
+		}*/
 
-	}*/
+		/*
+		auto m_pUnit = _this->m_pUnit;
+
+		auto ptr = *(unsigned long long*)(MTFramework::Unit::_UnitManagerPointer);
+		unsigned long objectCount = *(unsigned long*)(ptr + MTFramework::Unit::NumObjectsToIterateOffset);
+
+		for (auto i = 0; i < objectCount; i++)
+		{
+			auto pObject = &m_pUnit->m_pObjects[i];
+			DebugOutput("Vtable Addr of m_pUnit->m_pObjects[%u] is %llx\n", pObject->m_Vtable);
+		}*/
+
+	}
 #endif
 
 
