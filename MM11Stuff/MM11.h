@@ -10,6 +10,7 @@
 #include "MTFramework.h"
 #include "Utils.h"
 #include "DebugUtils.h"
+#include <random>
 
 
 #define RADICAL_ED 1
@@ -107,4 +108,8 @@ extern float * g_fGlobalGameSpeed;
 extern bool g_bPlaybackSync;
 extern bool g_bDidFrameStep;
 extern unsigned long long g_llGameLoopRcx;
+
+#ifdef RANDTEST
+extern std::random_device g_RandTest;
+#endif
 

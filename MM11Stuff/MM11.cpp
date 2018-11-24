@@ -23,6 +23,11 @@ unsigned long g_dwTickCount = 0x0;
 int64_t g_dwPerformanceCount = 0x0;
 unsigned long g_dwGameSpeed = 1;
 
+#ifdef RANDTEST
+std::random_device g_RandTest;
+#endif
+
+
 oCheckInputState04 original_CheckInputState04 = (oCheckInputState04)(MPGAME_GETINPUTSTATE04_ADDRESS);
 oHandleGameSpeed original_HandleGameSpeed = (oHandleGameSpeed)(HANDLEGAMESPEED_ADDRESS);
 oHandleGameSpeed2 original_HandleGameSpeed2 = (oHandleGameSpeed2)(HANDLEGAMESPEED02_ADDRESS);
@@ -227,7 +232,6 @@ void _FuckYourLimiter()
 
 	unsigned char * pMem = (unsigned char*)(0x0000000148E3270D);
 	
-	//const unsigned char  * replaceBytes = "\x90\x90\x90\x90\x90"
 	for (unsigned int i = 0; i < 10; i++)
 		*(pMem + i) = 0x90;
 
@@ -497,6 +501,14 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	if (GetAsyncKeyState(VK_F5) & 1)
 	{
 		/*
+		auto pGameState = MTFramework::GetGameState();
+		if (pGameState)
+		{
+			DebugOutput("GameState string: %s", pGameState->m_szMenuState);
+		}*/
+
+
+		/*
 		auto pColMgr = &_this->m_pCollision->m_CollManager;
 		for (unsigned int i = 0; i < pColMgr->m_NumObjects; i++)
 		{
@@ -731,6 +743,11 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 	DumpPointersForExternalOSD();
 
+#ifdef RANDTEST
+	DebugOutput("Init Random Test");
+	std::default_random_engine reng(g_RandTest());
+	std::uniform_int_distribution<int> uniform_dist(1, 6);
+#endif
 }
 
 // shut up c4996

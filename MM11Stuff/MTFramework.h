@@ -4,6 +4,63 @@
 // Make some sense, sensemaker!
 namespace MTFramework
 {
+
+#pragma pack(push, 1)
+	typedef struct t_GameState
+	{
+		unsigned long long m_qwUnknown;
+
+		char * m_szMenuState;
+
+	} GameState;
+
+	class UnkClass_01
+	{
+	public:
+		// 0x00 - 0x07
+		virtual void _A() = 0;
+
+		// 0x08 - 0x0F
+		virtual void _B() = 0;
+
+		// 0x10 - 0x17
+		virtual void _C() = 0;
+
+		// 0x18 - 0x1F
+		virtual void _D() = 0;
+
+		// 0x20 - 0x27
+		virtual GameState * _GetGameState() = 0;
+	protected:
+	private:
+
+	};
+
+	class UnkClass_02
+	{
+	public:
+
+		// 0x0000 - 0x7057
+		unsigned char m_ucUnknown0000_007057[0x7058 - 0x0];
+
+		// 0x7058 - 0x705F
+		UnkClass_01 * m_pUnk01;
+	protected:
+	private:
+	};
+#pragma pack(pop)
+
+	// We're loading if the m_szMenuState string == "aBriefing"
+	static GameState * GetGameState()
+	{
+		UnkClass_02 * m_pUnk02 = (UnkClass_02*)(*(unsigned long long*)0x140B87490);
+		if (m_pUnk02->m_pUnk01)
+		{
+			return m_pUnk02->m_pUnk01->_GetGameState();
+		}
+		return nullptr;
+	}
+
 	enum eCameraDisplayType : unsigned char
 	{
 		CDT_NORMAL            = 0x00,
@@ -396,6 +453,8 @@ namespace MTFramework
 
 	};
 
+	// Template class
+	// cGeometryArray
 	class CollisionManager
 	{
 	public:
