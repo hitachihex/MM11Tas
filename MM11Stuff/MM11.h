@@ -13,6 +13,17 @@
 #include <random>
 
 
+
+/*	static bool bOnce = false;
+
+	if (!bOnce) {
+		bOnce = true;
+		DebugOutput("timeGetTime hook ok ");
+	}
+*/
+
+#define DoOnceBlock(s) static bool bOnce=false; if(!bOnce) {  bOnce=true; DebugOutput(s); }
+
 #define RADICAL_ED 1
 
 #define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
@@ -44,6 +55,8 @@ extern oTimeGetTime original_TimeGetTime;
 
 typedef unsigned long(_fastcall * oGetTickCount)();
 extern oGetTickCount original_GetTickCount;
+
+typedef void(__fastcall * empty_init_Routine)();
 
 //typedef ATOM(__fastcall * oRegisterClassExW)(WNDCLASSEXW*);
 //oRegisterClassExW original_RegisterClassExW = (oRegisterClassExW)(*(unsigned long long*)REGISTERCLASSEXW_IAT_ADDRESS);
@@ -85,14 +98,18 @@ extern unsigned long long * g_pXInputGetState_IAT;
 
 //extern LRESULT CALLBACK MainWindowProc_Hook(HWND, UINT, WPARAM, LPARAM);
 
-extern void _FixIATRehook();
+extern void __fastcall _FixIATRehook();
 extern void _FuckYourLimiter();
 
 extern void DumpPointersForExternalOSD();
 
 extern bool IsLoading(unsigned long long);
 
-extern void InitFastForward();
+extern void __fastcall InitFastForward();
+
+extern void __fastcall InitRNGHooks();
+
+extern void DoInitRoutine(const char *, empty_init_Routine);
 
 //extern void ForceGameOver(unsigned long long);
 

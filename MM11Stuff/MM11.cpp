@@ -47,41 +47,53 @@ HOOK_TRACE_INFO MM11_MTObjectComInit02_HookHandle = { NULL };
 HOOK_TRACE_INFO MM11_MTObjectComInit03_HookHandle = { NULL };
 
 
-void InitFastForward()
+void DoInitRoutine(const char * pcszNameBind, empty_init_Routine init_routine)
 {
-	DebugOutput("Init fast forward hooks.");
+	DebugOutput("Init %s", pcszNameBind);
+	init_routine();
+	DebugOutput("Init %s done.");
+}
+
+void __fastcall InitRNGHooks()
+{
+	g_dwBaseTime = timeGetTime();
+	*(unsigned long long*)(TIMEGETTIME_IAT_ADDRESS) = (unsigned long long)TimeGetTime_Hook;
+}
+
+void __fastcall InitFastForward()
+{
 	g_dwTickCount = GetTickCount();
 	g_dwBaseTime = timeGetTime();
 	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&g_dwPerformanceCount));
 
 	*(unsigned long long*)(TIMEGETTIME_IAT_ADDRESS) = (unsigned long long)TimeGetTime_Hook;
 	*(unsigned long long*)(QPC_IAT_ADDRESS) = (unsigned long long)QueryPerformanceCounter_Hook;
-	// done
-	DebugOutput("All done.");
 }
 
 unsigned long __fastcall TimeGetTime_Hook()
 {
-	static bool bOnce = false;
-
-	if (!bOnce) {
-		bOnce = true;
-		DebugOutput("timeGetTime hook ok ");
-	}
+	DoOnceBlock("timeGetTime hook ok");
 
 	auto curGetTime = original_TimeGetTime();
+	unsigned long result = 0;
 	// ??
-	return g_dwBaseTime + ((curGetTime - g_dwBaseTime) * g_dwGameSpeed);
+#ifdef FASTFORWARD_HOOK_TEST
+	result = g_dwBaseTime + ((curGetTime - g_dwBaseTime) * g_dwGameSpeed);
+#else
+	result = g_dwBaseTime + ((curGetTime - g_dwBaseTime) * 1);
+#endif
+
+#ifdef RADICAL_ED
+	///result = 0;
+#endif
+	return result;
+
+
 }
 
 unsigned long __fastcall GetTickCount_Hook()
 {
-	static bool bOnce = false;
-	if (!bOnce)
-	{
-		bOnce = true;
-		DebugOutput("GetTickCount hook, !bOnce");
-	}
+	DoOnceBlock("GetTickCount hook, !bOnce");
 
 	auto curTickCount = original_GetTickCount();
 	return g_dwTickCount + ((curTickCount - g_dwTickCount) * g_dwGameSpeed);
@@ -89,12 +101,7 @@ unsigned long __fastcall GetTickCount_Hook()
 
 bool __fastcall QueryPerformanceCounter_Hook(LARGE_INTEGER * pPerformanceCounter)
 {
-	static bool bOnce = false;
-	if (!bOnce)
-	{
-		bOnce = true;
-		DebugOutput("QueryPerformanceCounter hook, !bOnce");
-	}
+	DoOnceBlock("QueryPerformanceCounter hook, !bOnce");
 
 	int64_t curPerfCounter;
 	if (!original_QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&curPerfCounter)))
@@ -240,12 +247,7 @@ void _FuckYourLimiter()
 // Handles megaman's speed only.
 void __fastcall HandleGameSpeed2_Hook(unsigned long long rcx)
 {
-	static bool bOnce = false;
-	if (!bOnce)
-	{
-		DebugOutput("HandleGameSpeed2_Hook, !bOnce");
-		bOnce = true;
-	}
+	DoOnceBlock("HandleGameSpeed2_Hook, !bOnce");
 
 	//float * pSpeedMultiplier = (float*)(rcx + 0x28);
 	//*pSpeedMultiplier = 1.0f;
@@ -255,13 +257,8 @@ void __fastcall HandleGameSpeed2_Hook(unsigned long long rcx)
 // I'm not sure what this even does??
 unsigned long __fastcall HandleGameSpeed_Hook(unsigned long long rcx, unsigned long long rdx, unsigned long long r8, unsigned long long r9)
 {
-	static bool bOnce = false;
+	DoOnceBlock("HandleGameSpeed_Hook, !bOnce");
 
-	if (!bOnce)
-	{
-		DebugOutput("HandleGameSpeed_Hook, !bOnce.");
-		bOnce = true;
-	}
 	// *rdx = 1.0, 	No matter what!
 	//float * pSpeedMultiplier = (float*)rdx;
 	//*pSpeedMultiplier = 1.0F;
@@ -309,7 +306,7 @@ void __fastcall MTObjectComInit_Hook00(unsigned long long rcx, unsigned long lon
 	return original_ComInit00(rcx, rdx);
 }
 
-void _FixIATRehook()
+void __fastcall _FixIATRehook()
 {
 	//000000014D0311D1 - denuvo'd
 	//000000014092234D - drm free
@@ -451,14 +448,8 @@ void ForceGameOver(unsigned long long argRcx)
 void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 {
 	MTFramework::MainGame * _this = (MTFramework::MainGame*)(ecx);
+	DoOnceBlock("GameLoop_Hook, !bOnce");
 
-	static bool bOnce = false;
-
-	if (!bOnce)
-	{
-		DebugOutput("GameLoop_Hook, !bOnce");
-		bOnce = true;
-	}
 	g_llGameLoopRcx = ecx;
 	if (g_pPlaybackManager)
 	{
@@ -496,8 +487,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	}
 	
 #ifdef RADICAL_ED
-	
-	
+
 	if (GetAsyncKeyState(VK_F5) & 1)
 	{
 		/*
@@ -650,14 +640,9 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 
 		*(unsigned long long*)(&original_XInputGetState) = (unsigned long long) GetProcAddress(GetModuleHandle(L"xinput1_3.dll"), "XInputGetState");
 
-		//SetupD3D11Hooks();
 		DebugOutput("Original XInputGetState = %llx", (unsigned long long)original_XInputGetState);
 
-		// g_pPlaybackManager
-		//000000018000A928
 	}
-
-	//HookDirectInputMethods();
 
 	return original_CheckInputState04(ecx, edx);
 }
@@ -727,17 +712,20 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	*(unsigned long long*)(XINPUT_IAT_ADDRESS) = (unsigned long long)XInputGetState_Hook;
 	*(unsigned long long*)(XINPUT_GETCAPS_IAT_ADDRESS) = (unsigned long long)XInputGetCapabilities_Hook;
 
-#ifdef FASTFORWARD_HOOK_TEST
 	VirtualProtect((LPVOID)TIMEGETTIME_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 	VirtualProtect((LPVOID)QPC_IAT_ADDRESS, 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
 
-	// no get tick count hook required.
-	InitFastForward();
+#ifdef FASTFORWARD_HOOK_TEST
+	DoInitRoutine("FastForward Hooks", InitFastForward);
+#endif
+
+#ifdef RADICAL_ED
+	DoInitRoutine("RNG Hooks", InitRNGHooks);
 #endif
 
 
-	_FixIATRehook();
-	//_FuckYourLimiter();
+	DoInitRoutine("Fix IAT rehook", _FixIATRehook);
+	//DoInitRoutine("FuckYourLimiter",_FuckYourLimiter());
 
 	g_pPlaybackManager = new PlaybackManager("megaman.rec");
 

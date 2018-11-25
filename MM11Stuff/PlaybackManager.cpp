@@ -572,61 +572,6 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 				}
 			}
 
-			/*
-			if (this->m_RuntoLineNo != -1)
-			{
-				// If we are a multi-level file, we need to compare against internal line number.
-				if (m_pCurrentInput->m_bMultiLevelFile)
-				{
-					if (m_pCurrentInput->m_nInternalLineNo < this->m_RuntoLineNo)
-						;
-					else
-					{
-						this->m_WalktoLineNo = -1;
-						g_bPaused = true;
-
-					}
-				}
-				else
-				{
-					if (m_pCurrentInput->m_nLineNo < this->m_RuntoLineNo)
-					{
-						;
-					}
-					else
-					{
-						this->m_RuntoLineNo = -1;
-						g_bPaused = true;
-						// set speed here
-					}
-				}
-			}
-			else if (this->m_WalktoLineNo != -1)
-			{
-				if (m_pCurrentInput->m_bMultiLevelFile)
-				{
-					if (m_pCurrentInput->m_nInternalLineNo < this->m_WalktoLineNo)
-						;
-					else
-					{
-						this->m_WalktoLineNo = -1;
-						g_bPaused = true;
-
-					}
-				}
-				else
-				{
-					if (m_pCurrentInput->m_nLineNo < this->m_WalktoLineNo)
-						;
-					else
-					{
-						this->m_WalktoLineNo = -1;
-						g_bPaused = true;
-						// set speed here
-					}
-				}
-			}*/
-
 			this->m_FrameToNext += this->m_pCurrentInput->m_Frames;
 		} // frame to next scope end
 		else
