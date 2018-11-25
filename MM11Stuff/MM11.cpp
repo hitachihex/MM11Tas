@@ -51,7 +51,7 @@ void DoInitRoutine(const char * pcszNameBind, empty_init_Routine init_routine)
 {
 	DebugOutput("Init %s", pcszNameBind);
 	init_routine();
-	DebugOutput("Init %s done.");
+	DebugOutput("Init %s done.", pcszNameBind);
 }
 
 void __fastcall InitRNGHooks()
