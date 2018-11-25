@@ -321,7 +321,6 @@ void __fastcall _FixIATRehook()
 	*(pMem + 0x2) = 0x90;
 	*(pMem + 0x3) = 0x90;
 
-	DebugOutput("Fixed IAT rehook.");
 }
 
 
