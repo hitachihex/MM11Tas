@@ -2,6 +2,7 @@
 
 #include "Addresses.h"
 #include <easyhook.h>
+#include <windowsx.h>
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,9 +28,18 @@
 #define RADICAL_ED 1
 #define SEED_TWIST_HOOKS 1//BOSS_PATTERN_HOOKS 1
 
-#define CAMERA_DEFAULT_ZOOM     10.0F
-#define CAMERA_ZOOM_MULTIPLIER  0.35
+#define CAMERA_DEFAULT_ZOOM      10.0F
+#define CAMERA_ZOOM_MULTIPLIER   0.35f
+#define CAMERA_ROTATE_MULTIPLIER 1.0f
+
+#define CAMERA_ROTATE_ENABLED 1
+
 extern bool g_bScrollEvent;
+extern float g_CameraAngle;
+extern int g_OldMouseX;
+extern int g_OldMouseY;
+extern int g_MouseX;
+extern int g_MouseY;
 
 #define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
                                 extern oComInitOriginal##num original_ComInit##num;

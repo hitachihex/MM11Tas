@@ -155,7 +155,7 @@ namespace MTFramework
 		unsigned long m_dwUnknown_5C_5F;
 
 		// 0x60 - 0x63
-		unsigned long m_dwUnknown_60_63;
+		float m_Rotation;
 
 		// 0x64 - 0x67
 		unsigned long m_dwUnknown_64_67;

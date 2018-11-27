@@ -28,6 +28,11 @@ unsigned long g_dwGameSpeed = 1;
 WNDPROC g_OldWndProc = NULL;
 short g_OldWheelDelta = 0;
 short g_CurWheelDelta = 0;
+float g_CameraAngle = 0.0f;
+int g_OldMouseX = 0;
+int g_OldMouseY = 0;
+int g_MouseX = 0;
+int g_MouseY = 0;
 bool g_bScrollEvent = false;
 
 
@@ -141,6 +146,59 @@ LRESULT CALLBACK MainWindowProc_Hook(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 		g_bScrollEvent = true;
 		break;
+	case WM_MOUSEMOVE:
+	{
+#ifdef CAMERA_ROTATE_ENABLED
+		g_OldMouseX = g_MouseX;
+		g_OldMouseY = g_MouseY;
+
+		auto keyFlags = wParam;
+		g_MouseX = GET_X_LPARAM(lParam);
+		g_MouseY = GET_Y_LPARAM(lParam);
+
+		MTFramework::MainGame * _this = (MTFramework::MainGame*)(g_llGameLoopRcx);
+		if (_this != nullptr)
+		{
+			auto m_pCamera = _this->m_pCamera;
+			auto pMainCamera = &m_pCamera->m_Cameras[0];
+
+			if (pMainCamera != nullptr && pMainCamera->m_pCameraInstance != nullptr)
+			{
+				// Only if Right Mouse Button is down.
+				if (keyFlags & MK_RBUTTON)
+				{
+					auto pInst = pMainCamera->m_pCameraInstance;
+
+					float newX = pInst->m_PositionX;
+					float newY = pInst->m_PositionY;
+
+					// Right movement
+					if ((g_MouseX - g_OldMouseX) > 0)
+						newX += (1 * CAMERA_ROTATE_MULTIPLIER);
+
+					// Left movement
+					else if ((g_MouseX - g_OldMouseX) < 0)
+						newX -= (1 * CAMERA_ROTATE_MULTIPLIER);
+
+					// Up movement
+					if ((g_MouseY - g_OldMouseY) > 0)
+						newY += (1 * CAMERA_ROTATE_MULTIPLIER);
+
+					// Down movement
+					else if ((g_MouseY - g_OldMouseY) < 0)
+						newY -= (1 * CAMERA_ROTATE_MULTIPLIER);
+
+
+					pInst->m_PositionX = newX;
+					pInst->m_PositionY = newY;
+
+				}
+
+			}
+		}
+#endif
+	}
+	break;
 	default:
 		break;
 	}
@@ -414,11 +472,11 @@ void ThreadProc()
 
 		if (_this != nullptr)
 		{
+			
 			// If middle mouse is held down
 			if (GetAsyncKeyState(VK_MBUTTON) & 0x8000)
 			{
 				auto m_pCamera = _this->m_pCamera;
-
 				// Main camera
 				auto pCamera = &m_pCamera->m_Cameras[0];
 
