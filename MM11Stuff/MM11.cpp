@@ -5,6 +5,7 @@
 #include "PlaybackManager.h"
 #include <timeapi.h>
 #include "BossDecisionInit.h"
+#include "RNGHooks.h"
 
 
 #pragma comment(lib, "winmm.lib")
@@ -493,6 +494,15 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 
 	if (GetAsyncKeyState(VK_F5) & 1)
 	{
+		RNG::ActionTimeValues * pValues = new RNG::ActionTimeValues();
+		pValues->A = rand();
+		pValues->B = rand();
+		pValues->C = rand();
+		pValues->D = rand();
+
+		unsigned long result = RNG::Shift(pValues);
+
+		DebugOutput("RNG::Shift result = %u", result);
 		/*
 		auto pGameState = MTFramework::GetGameState();
 		if (pGameState)
