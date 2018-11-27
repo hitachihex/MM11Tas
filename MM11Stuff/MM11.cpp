@@ -422,19 +422,19 @@ void ThreadProc()
 				// Main camera
 				auto pCamera = &m_pCamera->m_Cameras[0];
 
-				if (pCamera->m_pScreenStuff)
+				if (pCamera->m_pCameraInstance)
 				{
 					if (g_bScrollEvent)
 					{
 						// Zooming in
 						if (g_CurWheelDelta > 0)
 						{
-							pCamera->m_pScreenStuff->m_Zoom -= (1 * CAMERA_ZOOM_MULTIPLIER);
+							pCamera->m_pCameraInstance->m_Zoom -= (1 * CAMERA_ZOOM_MULTIPLIER);
 						}
 						// Zooming out
 						else if (g_CurWheelDelta < 0)
 						{
-							pCamera->m_pScreenStuff->m_Zoom += (1 * CAMERA_ZOOM_MULTIPLIER);
+							pCamera->m_pCameraInstance->m_Zoom += (1 * CAMERA_ZOOM_MULTIPLIER);
 						}
 
 						g_bScrollEvent = false;
@@ -450,9 +450,9 @@ void ThreadProc()
 				// Main camera
 				auto pCamera = &m_pCamera->m_Cameras[0];
 
-				if (pCamera->m_pScreenStuff)
+				if (pCamera->m_pCameraInstance)
 				{
-					pCamera->m_pScreenStuff->m_Zoom = CAMERA_DEFAULT_ZOOM;
+					pCamera->m_pCameraInstance->m_Zoom = CAMERA_DEFAULT_ZOOM;
 				}
 			}
 		}

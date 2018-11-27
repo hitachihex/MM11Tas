@@ -81,7 +81,7 @@ namespace MTFramework
 #pragma pack(push, 1)
 
 
-	class ScreenStuff
+	class GameCameraInstance
 	{
 	public:
 		// 0x00 - 0x07
@@ -204,8 +204,7 @@ namespace MTFramework
 		UnknownCameraClass00 * m_pCameraClassUnknown00;
 
 		// 0x58 - 0x5F
-		// Lol, this is terrible name for this.
-		ScreenStuff * m_pScreenStuff;
+		GameCameraInstance * m_pCameraInstance;
 
 		// 0x60 - 0x63
 		unsigned long m_dwUnknown60_63;
