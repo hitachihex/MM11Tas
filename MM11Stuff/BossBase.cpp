@@ -39,12 +39,3 @@ bool Boss::BossBase::Hook()
 
 }
 
-//Boss::BossBase::BossBase() = delete;
-
-/*
-{
-	DebugOutput("Is BossBase default ctor being called right afterwards?");
-	this->m_OriginalAddress = NULL;
-	this->m_DecisionHandler = nullptr;
-
-}*/

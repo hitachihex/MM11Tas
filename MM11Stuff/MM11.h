@@ -27,6 +27,10 @@
 #define RADICAL_ED 1
 #define SEED_TWIST_HOOKS 1//BOSS_PATTERN_HOOKS 1
 
+#define CAMERA_DEFAULT_ZOOM     10.0F
+#define CAMERA_ZOOM_MULTIPLIER  0.35
+extern bool g_bScrollEvent;
+
 #define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
                                 extern oComInitOriginal##num original_ComInit##num;
 
@@ -108,6 +112,8 @@ extern void __fastcall InitFastForward();
 
 extern void __fastcall InitRNGHooks();
 
+extern void __fastcall InitWindowHook();
+
 extern void DoInitRoutine(const char *, empty_init_Routine);
 
 //extern void ForceGameOver(unsigned long long);
@@ -124,6 +130,8 @@ extern float * g_fGlobalGameSpeed;
 extern bool g_bPlaybackSync;
 extern bool g_bDidFrameStep;
 extern unsigned long long g_llGameLoopRcx;
+extern WNDPROC g_OldWndProc;
+extern short g_OldWheelDelta, g_CurWheelDelta;
 
 #ifdef RANDTEST
 extern std::random_device g_RandTest;

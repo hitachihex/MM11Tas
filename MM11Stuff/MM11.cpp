@@ -25,9 +25,10 @@ unsigned long g_dwTickCount = 0x0;
 int64_t g_dwPerformanceCount = 0x0;
 unsigned long g_dwGameSpeed = 1;
 
-#ifdef RANDTEST
-std::random_device g_RandTest;
-#endif
+WNDPROC g_OldWndProc = NULL;
+short g_OldWheelDelta = 0;
+short g_CurWheelDelta = 0;
+bool g_bScrollEvent = false;
 
 
 oCheckInputState04 original_CheckInputState04 = (oCheckInputState04)(MPGAME_GETINPUTSTATE04_ADDRESS);
@@ -125,32 +126,29 @@ bool __fastcall QueryPerformanceCounter_Hook(LARGE_INTEGER * pPerformanceCounter
 	return true;
 }
 
-/*
+
 LRESULT CALLBACK MainWindowProc_Hook(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
-	//DebugOutput("MWP.Msg = %u", uMsg);
+	DoOnceBlock("MainWindowProc_Hook, !bOnce");
 
-	if (uMsg == WM_KEYUP)
-		DebugOutput("KeyUp  WinProcHook");
-
-	if (uMsg == WM_KEYDOWN)
-		DebugOutput("KeyDown WinProcHook");
-
-	if (uMsg == WM_SYSKEYDOWN)
-		DebugOutput("SysKeyDown WinProcHook");
-
-	if (uMsg == WM_SYSKEYUP)
-		DebugOutput("SysKeyUp WinProcHook");
-
-	if (uMsg == WM_CHAR)
+	//return original_MainWindowProc(hWnd, uMsg, wParam, lParam);
+	switch (uMsg)
 	{
-		DebugOutput("WM_CHAR , Key==%X", wParam);
+	case WM_MOUSEWHEEL:
+		g_OldWheelDelta = g_CurWheelDelta;
+		g_CurWheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+
+		g_bScrollEvent = true;
+		break;
+	default:
+		break;
 	}
 
-	return original_MainWindowProc(hWnd, uMsg, wParam, lParam);
+	return CallWindowProcW(g_OldWndProc, hWnd, uMsg, wParam, lParam);
 }
 
+/*
 #pragma warning(disable : 4996)
 HRESULT __fastcall DirectInputDevice_GetDeviceState_Hook(IDirectInputDevice*pDev, unsigned long cbSize, LPVOID lpvData)
 {
@@ -405,27 +403,62 @@ static void ChangeGameSpeed(float f, bool reset = false)
 
 }
 
-/*
+// Sure hope I don't run into any race conditions doing this..
 void ThreadProc()
 {
-	//DebugOutput("hi from threadProc");
+	DoOnceBlock("ThreadProc, !bOnce");
 
 	while (true)
 	{
-		if (GetAsyncKeyState(VK_ADD) & 1)
+		MTFramework::MainGame * _this = (MTFramework::MainGame*)(g_llGameLoopRcx);
+
+		if (_this != nullptr)
 		{
-			ChangeGameSpeed(1.0f);
+			// If middle mouse is held down
+			if (GetAsyncKeyState(VK_MBUTTON) & 0x8000)
+			{
+				auto m_pCamera = _this->m_pCamera;
+
+				// Main camera
+				auto pCamera = &m_pCamera->m_Cameras[0];
+
+				if (pCamera->m_pScreenStuff)
+				{
+					if (g_bScrollEvent)
+					{
+						// Zooming in
+						if (g_CurWheelDelta > 0)
+						{
+							pCamera->m_pScreenStuff->m_Zoom -= (1 * CAMERA_ZOOM_MULTIPLIER);
+						}
+						// Zooming out
+						else if (g_CurWheelDelta < 0)
+						{
+							pCamera->m_pScreenStuff->m_Zoom += (1 * CAMERA_ZOOM_MULTIPLIER);
+						}
+
+						g_bScrollEvent = false;
+					}
+				}
+			}
+
+			if (GetAsyncKeyState(VK_F9) & 1)
+			{
+				DebugOutput("Defaulting camera zoom.");
+				auto m_pCamera = _this->m_pCamera;
+
+				// Main camera
+				auto pCamera = &m_pCamera->m_Cameras[0];
+
+				if (pCamera->m_pScreenStuff)
+				{
+					pCamera->m_pScreenStuff->m_Zoom = CAMERA_DEFAULT_ZOOM;
+				}
+			}
 		}
-
-
-		if (GetAsyncKeyState(VK_SUBTRACT) & 1)
-		{
-			ChangeGameSpeed(-1.0f);
-
-		}
-		Sleep(10);
+		Sleep(1);
 	}
-}*/
+}
 
 
 void ForceGameOver(unsigned long long argRcx)
@@ -489,23 +522,10 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 			DebugOutput("Toggled g_bPlaybackSync.");
 		}
 	}
-	
-#ifdef RADICAL_ED
 
+#ifdef RADICAL_ED
 	if (GetAsyncKeyState(VK_F5) & 1)
 	{
-		/*
-		RNG::ActionTimeValues * pValues = new RNG::ActionTimeValues();
-		pValues->A = rand();
-		pValues->B = rand();
-		pValues->C = rand();
-		pValues->D = rand();
-
-		unsigned long result = RNG::Shift_Hook(pValues);
-
-		DebugOutput("RNG::Shift_Hook result = %u", result);*/
-
-
 		/*
 		auto pGameState = MTFramework::GetGameState();
 		if (pGameState)
@@ -658,6 +678,8 @@ void __fastcall CheckInputState04_Hook(unsigned long ecx, unsigned long edx)
 
 		DebugOutput("Original XInputGetState = %llx", (unsigned long long)original_XInputGetState);
 
+		CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)&ThreadProc, NULL, NULL, NULL);
+
 	}
 
 	return original_CheckInputState04(ecx, edx);
@@ -669,7 +691,6 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 	if (FAILED(result))
 	{
-		//wchar_t outputBuffer[]
 		auto err = RtlGetLastErrorString();
 		DebugOutputW(L"Failed to hook GetInputState04 , lastErr=%s", err);
 
@@ -736,31 +757,34 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 #endif
 
 #ifdef RADICAL_ED
-	//DoInitRoutine("RNG Hooks", InitRNGHooks);
 #endif
 
-
 	DoInitRoutine("Fix IAT rehook", _FixIATRehook);
-
 	DoInitRoutine("InitBossDecision Hooks", Boss::InitBossDecisionHooks);
+	DoInitRoutine("Hook WndProc", InitWindowHook);
 	//DoInitRoutine("FuckYourLimiter",_FuckYourLimiter());
 
 	g_pPlaybackManager = new PlaybackManager("megaman.rec");
-
 	DumpPointersForExternalOSD();
 
 #ifdef RANDTEST
-	DebugOutput("Init Random Test");
-	std::default_random_engine reng(g_RandTest());
-	std::uniform_int_distribution<int> uniform_dist(1, 6);
 #endif
+}
+
+void __fastcall InitWindowHook()
+{
+	HWND hWnd = FindWindowW(L"MT FRAMEWORK", nullptr);
+
+	if (hWnd == NULL)
+		return;
+
+	g_OldWndProc = (WNDPROC)SetWindowLongPtrW(hWnd, GWLP_WNDPROC, (LONG_PTR)&MainWindowProc_Hook);
 }
 
 // shut up c4996
 #pragma warning(disable : 4996)
 void DumpPointersForExternalOSD()
 {
-	// Just reference them and %X print to file?
 	FILE * pOutFile = nullptr;
 
 	pOutFile = fopen("pointer_ref.txt", "w");

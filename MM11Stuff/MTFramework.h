@@ -83,6 +83,7 @@ namespace MTFramework
 
 	class ScreenStuff
 	{
+	public:
 		// 0x00 - 0x07
 		/*
 		virtual void _A() = 0;											-  table[0]
@@ -139,7 +140,7 @@ namespace MTFramework
 		float m_AspectRatio;
 
 		// 0x4C - 0x4F
-		unsigned long m_dwUnknown_4C_4F;
+		float m_Zoom;
 
 		// 0x50 - 0x53
 		float m_PositionX;
@@ -174,12 +175,18 @@ namespace MTFramework
 		// 0x78 - 0x7B
 		float m_PrevPositionZ;
 
+	protected:
+	private:
+
 	};
 
 	class UnknownCameraClass00
 	{
+	public:
 		// 0x00 - 0x07
 		unsigned long long m_qwVtable;
+	protected:
+	private:
 	};
 
 	class GameCamera
