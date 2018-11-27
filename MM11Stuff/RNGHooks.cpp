@@ -92,8 +92,8 @@ namespace RNG
 			// Take current frame + LSB
 			pAtv->C = (g_pPlaybackManager->m_CurrentFrame + LSB);
 
-			// Take total frame count.
-			pAtv->D = g_pPlaybackManager->GetTotalFrameCount();
+			// Take current frame + the whole input records current state as an integer.
+			pAtv->D = (g_pPlaybackManager->m_CurrentFrame + (unsigned long)g_pPlaybackManager->GetCurrentInput()->m_InputState);
 		}
 
 		return ((unsigned long(__fastcall*)(ActionTimeValues*))g_OriginalShiftRNG)(pAtv);
