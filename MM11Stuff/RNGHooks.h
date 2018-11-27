@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Boss_ImpactMan.h"
 
 // Tinker tailor, soldier sailor
 namespace RNG
 {
-
 	// r8  = rcx
 #pragma pack(push, 1)
 	typedef struct t_ActionTimeValues
@@ -27,6 +27,51 @@ namespace RNG
 	// So an odd number means he dashes, and an even number means he jumps.
 	__declspec(noinline) static unsigned long __fastcall Shift(ActionTimeValues * pAtv)
 	{
+
+		// We sub rsp, 0x20 for _ImpactManInstance currently.
+		// Need to change this when we add more.
+
+		//48 83 C4 20 - add rsp, 0x20
+		//48 83 EC 20 - sub rsp, 0x20
+
+		// add rsp, 0x20
+		// mov rax, dword ptr ss:[rsp]
+		// sub rsp, 0x20
+		// ret
+		const char * p = "\x48\x83\xC4\x20\x48\x8B\x04\x24\x48\x83\xEC\x20\xC3";
+		
+		// mov rax, rbx
+		// ret
+		const char * GetRBX = "\x48\x8B\xC3\xC3";
+
+		// Get our return address.
+		unsigned long long RetRetRet = ((unsigned long long(__fastcall*)())p)();
+
+		if (RetRetRet == 0x00000001400EBA02)
+		{
+			// Need RBX as the ImpactMan object instance.
+			unsigned long long RBX = ((unsigned long long(__fastcall*)())GetRBX)();
+			Boss::_ImpactManInstance * pInstance = (Boss::_ImpactManInstance*)(RBX);
+
+			switch (pInstance->m_CurrentActionStep)
+			{
+			case 0x00:
+				break;
+			case 0x01:
+				break;
+			case 0x02:
+				break;
+			case 0x03:
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Temp
+		return 0x0;
+
+		/*
 		// mov eax, dword ptr ds:[rcx+0x4]
 		unsigned long eax = pAtv->B;
 
@@ -78,6 +123,6 @@ namespace RNG
 		// mov dword ptr ds:[r8+0x0C], eax
 		r8->D = eax;
 
-		return eax;
+		return eax;*/
 	}
 };
