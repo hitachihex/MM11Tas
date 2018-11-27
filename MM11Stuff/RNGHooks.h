@@ -23,6 +23,8 @@ namespace RNG
 	} ActionTimeValues;
 #pragma pack(pop)
 
+	// Impact Man decides his next action based on this returning even or odd - (and ebx, 0x01) @ 0x1401972F7
+	// So an odd number means he dashes, and an even number means he jumps.
 	__declspec(noinline) static unsigned long __fastcall Shift(ActionTimeValues * pAtv)
 	{
 		// mov eax, dword ptr ds:[rcx+0x4]
