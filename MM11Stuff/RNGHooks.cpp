@@ -80,13 +80,19 @@ namespace RNG
 #endif
 		if (g_pPlaybackManager && g_pPlaybackManager->IsPlayingBack() && !g_pPlaybackManager->m_bLoading)
 		{
+			// Take current frame.
 			pAtv->A = g_pPlaybackManager->m_CurrentFrame; 
-			
-			// B??
-			pAtv->B = g_pPlaybackManager->m_CurrentFrame; //  left 16 bits of input state ?
-			// C??
-			pAtv->C = g_pPlaybackManager->m_CurrentFrame; // right 16 bits of input state ?
 
+			unsigned short MSB = (unsigned short)((unsigned int)g_pPlaybackManager->GetCurrentInput()->m_InputState & 0x00FF);
+			unsigned short LSB = (unsigned short)((unsigned int)g_pPlaybackManager->GetCurrentInput()->m_InputState & 0xFF00);
+
+			// Take current frame + MSB
+			pAtv->B = (g_pPlaybackManager->m_CurrentFrame + MSB);
+			
+			// Take current frame + LSB
+			pAtv->C = (g_pPlaybackManager->m_CurrentFrame + LSB);
+
+			// Take total frame count.
 			pAtv->D = g_pPlaybackManager->GetTotalFrameCount();
 		}
 
