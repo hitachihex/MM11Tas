@@ -4,6 +4,8 @@
 
 // Tinker tailor, soldier sailor
 
+#define TINKER_TAILOR_SOLDIER_SAILOR 1
+
 #define IMPACTMAN_SHIFTRNG_RETURNADDRESS 0x00000001400EBA02
 namespace RNG
 {

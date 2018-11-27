@@ -25,6 +25,7 @@ namespace RNG
 
 	unsigned long  __fastcall Shift_Hook(ActionTimeValues * pAtv)
 	{
+		DoOnceBlock("Shift_Hook, !bOnce");
 
 		// We sub rsp, 0x28 in our current hook method. 
 		// Need to change this when we add more local vars, etc.
@@ -36,6 +37,7 @@ namespace RNG
 		// mov rax, dword ptr ss:[rsp]
 		// sub rsp, 0x28
 		// ret
+#ifndef TINKER_TAILOR_SOLDIER_SAILOR
 		const char * p = "\x48\x83\xC4\x28\x48\x8B\x04\x24\x48\x83\xEC\x28\xC3";
 
 		// mov rax, rbx
@@ -73,6 +75,20 @@ namespace RNG
 			}
 		}
 
+
+		return ((unsigned long(__fastcall*)(ActionTimeValues*))g_OriginalShiftRNG)(pAtv);
+#endif
+		if (g_pPlaybackManager && g_pPlaybackManager->IsPlayingBack() && !g_pPlaybackManager->m_bLoading)
+		{
+			pAtv->A = g_pPlaybackManager->m_CurrentFrame; 
+			
+			// B??
+			pAtv->B = g_pPlaybackManager->m_CurrentFrame; //  left 16 bits of input state ?
+			// C??
+			pAtv->C = g_pPlaybackManager->m_CurrentFrame; // right 16 bits of input state ?
+
+			pAtv->D = g_pPlaybackManager->GetTotalFrameCount();
+		}
 
 		return ((unsigned long(__fastcall*)(ActionTimeValues*))g_OriginalShiftRNG)(pAtv);
 		
