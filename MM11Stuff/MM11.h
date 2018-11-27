@@ -103,8 +103,6 @@ extern void _FuckYourLimiter();
 
 extern void DumpPointersForExternalOSD();
 
-extern bool IsLoading(unsigned long long);
-
 extern void __fastcall InitFastForward();
 
 extern void __fastcall InitRNGHooks();

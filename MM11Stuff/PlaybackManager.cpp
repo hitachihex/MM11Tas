@@ -498,7 +498,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 	}
 
 	// This might not be the actual IsLoading, but this is a good test.
-	if (this->m_InputIndex < this->m_Inputs.size() && !IsLoading(g_llGameLoopRcx))
+	if (this->m_InputIndex < this->m_Inputs.size() && !this->m_bLoading)
 	{
 		if (wasFramestepped)
 		{
