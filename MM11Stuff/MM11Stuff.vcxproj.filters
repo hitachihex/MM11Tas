@@ -98,6 +98,9 @@
     <ClCompile Include="Boss_ImpactMan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RNGHooks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

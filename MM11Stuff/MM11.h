@@ -25,7 +25,7 @@
 #define DoOnceBlock(s) static bool bOnce=false; if(!bOnce) {  bOnce=true; DebugOutput(s); }
 
 #define RADICAL_ED 1
-#define BOSS_PATTERN_HOOKS 1
+#define SEED_TWIST_HOOKS 1//BOSS_PATTERN_HOOKS 1
 
 #define ComInitOriginalDef(num) typedef void(__fastcall * oComInitOriginal##num(unsigned long long, unsigned long long) \
                                 extern oComInitOriginal##num original_ComInit##num;

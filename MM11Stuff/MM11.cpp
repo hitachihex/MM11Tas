@@ -500,9 +500,8 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		pValues->C = rand();
 		pValues->D = rand();
 
-		unsigned long result = RNG::Shift(pValues);
-
-		DebugOutput("RNG::Shift result = %u", result);
+		//unsigned long result = RNG::Shift(pValues);
+		//DebugOutput("RNG::Shift result = %u", result);
 		/*
 		auto pGameState = MTFramework::GetGameState();
 		if (pGameState)

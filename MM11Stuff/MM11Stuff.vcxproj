@@ -199,6 +199,7 @@
     <ClCompile Include="MM11.cpp" />
     <ClCompile Include="MM11Stuff.cpp" />
     <ClCompile Include="PlaybackManager.cpp" />
+    <ClCompile Include="RNGHooks.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

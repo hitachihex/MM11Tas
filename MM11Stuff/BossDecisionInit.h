@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Boss_ImpactMan.h"
+#include "RNGHooks.h"
 
 namespace Boss
 {
@@ -12,6 +13,7 @@ namespace Boss
 		if (g_pImpactMan)
 			g_pImpactMan->Hook();
 #elif defined SEED_TWIST_HOOKS
+		RNG::InitHook();
 #else
 		DebugOutput("InitBossDecisionHooks - neither BOSS_PATTERN_HOOKS or SEED_TWIST_HOOKS are defined.");
 #endif

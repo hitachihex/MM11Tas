@@ -1,47 +1,33 @@
-#pragma once
+#include "stdafx.h"
+#include "RNGHooks.h"
 
-#include "Boss_ImpactMan.h"
-
-// Tinker tailor, soldier sailor
-
-#define IMPACTMAN_SHIFTRNG_RETURNADDRESS 0x00000001400EBA02
 namespace RNG
 {
-	extern HOOK_TRACE_INFO ShiftRNG_HookHandle;
-	extern const unsigned long long g_OriginalShiftRNG;
-	typedef unsigned long long(__cdecl * ___asm)();
+	___asm asm_GetRBX = (___asm)(0x0);
+	___asm asm_GetRetRet = (___asm)(0x0);
 
-	extern ___asm asm_GetRBX;        //= (___asm)(0x0);
-	extern ___asm asm_GetRetRet;     //= (___asm)(0x0);
+	const unsigned long long g_OriginalShiftRNG = 0x000000014032DE50;
+	HOOK_TRACE_INFO ShiftRNG_HookHandle = { NULL };
 
-	extern void InitHook();
 
-	// r8  = rcx
-#pragma pack(push, 1)
-	typedef struct t_ActionTimeValues
+	void InitHook()
 	{
-		// 0x00 - 0x03
-		unsigned long A;
+		NTSTATUS result = AddHook((void*)g_OriginalShiftRNG, Shift_Hook, NULL, &ShiftRNG_HookHandle);
 
-		// 0x04 - 0x7
-		unsigned long B;
-		
-		// 0x08 - 0x0B
-		unsigned long C;
+		if (FAILED(result))
+		{
+			auto err = RtlGetLastErrorString();
+			DebugOutputW(L"RNG::InitHook encountered an error -> %s", err);
+			return;
+		}
+		ExclusiveHook(&ShiftRNG_HookHandle);
+	}
 
-		// 0x0C - 0x0F
-		unsigned long D;
-	} ActionTimeValues;
-#pragma pack(pop)
-
-	// Impact Man decides his next action based on this returning even or odd - (and ebx, 0x01) @ 0x1401972F7
-	// So an odd number means he dashes, and an even number means he jumps.
-	/*__declspec(noinline)*/ extern unsigned long __fastcall Shift_Hook(ActionTimeValues*);
-	/*
+	unsigned long  __fastcall Shift_Hook(ActionTimeValues * pAtv)
 	{
 
-		// We sub rsp, 0x20 for _ImpactManInstance currently.
-		// Need to change this when we add more.
+		// We sub rsp, 0x28 in our current hook method. 
+		// Need to change this when we add more local vars, etc.
 
 		//48 83 C4 28 - add rsp, 0x28
 		//48 83 EC 28 - sub rsp, 0x28
@@ -51,7 +37,7 @@ namespace RNG
 		// sub rsp, 0x28
 		// ret
 		const char * p = "\x48\x83\xC4\x28\x48\x8B\x04\x24\x48\x83\xEC\x28\xC3";
-		
+
 		// mov rax, rbx
 		// ret
 		const char * GetRBX = "\x48\x8B\xC3\xC3";
@@ -61,12 +47,15 @@ namespace RNG
 		*(unsigned long long*)(&asm_GetRBX) = (unsigned long long)GetRBX;
 
 		// Get our return address.
-		unsigned long long RetRetRet = asm_GetRetRet();//((unsigned long long(__cdecl*)())p)();
+		unsigned long long RetRet = asm_GetRetRet();
+		//((unsigned long long(__cdecl*)())p)();
 
-		if (RetRetRet == 0x00000001400EBA02)
+		if (RetRet == IMPACTMAN_SHIFTRNG_RETURNADDRESS)
 		{
 			// Need RBX as the ImpactMan object instance.
-			unsigned long long RBX = asm_GetRBX();//((unsigned long long(__cdecl*)())GetRBX)();
+			unsigned long long RBX = asm_GetRBX();
+			//((unsigned long long(__cdecl*)())GetRBX)();
+
 			Boss::_ImpactManInstance * pInstance = (Boss::_ImpactManInstance*)(RBX);
 
 			switch (pInstance->m_CurrentActionStep)
@@ -84,9 +73,10 @@ namespace RNG
 			}
 		}
 
-		// Temp
-		return 0x0;
 
+		return ((unsigned long(__fastcall*)(ActionTimeValues*))g_OriginalShiftRNG)(pAtv);
+		
+		/*
 		// mov eax, dword ptr ds:[rcx+0x4]
 		unsigned long eax = pAtv->B;
 
@@ -122,7 +112,7 @@ namespace RNG
 
 		// xor eax, edx
 		eax ^= edx;
-		
+
 		// mov dword ptr ds:[r8+0x08], ecx
 		r8->C = ecx;
 
@@ -138,7 +128,6 @@ namespace RNG
 		// mov dword ptr ds:[r8+0x0C], eax
 		r8->D = eax;
 
-		return eax;
+		return eax;*/
 	}
-	*/
 };
