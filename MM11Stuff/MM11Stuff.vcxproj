@@ -172,6 +172,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
+    <ClInclude Include="BossBase.h" />
+    <ClInclude Include="BossDecisionInit.h" />
+    <ClInclude Include="Boss_ImpactMan.h" />
     <ClInclude Include="CGameWorker.h" />
     <ClInclude Include="D3D11Hooks.h" />
     <ClInclude Include="DebugUtils.h" />
@@ -188,6 +191,8 @@
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BossBase.cpp" />
+    <ClCompile Include="Boss_ImpactMan.cpp" />
     <ClCompile Include="D3D11Hooks.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MM11.cpp" />

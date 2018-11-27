@@ -58,6 +58,8 @@ public:
 
 	XINPUT_STATE * GetXInputState();
 
+	std::string m_CWD;
+
 #pragma region PublicForExternalOSD
 	InputRecord * m_pCurrentInput;
 
@@ -69,7 +71,8 @@ public:
 
 	char m_szCurrentManagerState[120];
 
-	bool *m_bLoading;
+	bool m_bLoading;
+
 #pragma endregion
 
 
@@ -102,8 +105,6 @@ private:
 	std::string cwd(szCurrentDirectory);*/
 
 	char m_szCurrentDirectory[256];
-
-	std::string m_CWD;
 
 };
 

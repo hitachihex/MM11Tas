@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "PlaybackManager.h"
 #include <timeapi.h>
+#include "BossDecisionInit.h"
 
 
 #pragma comment(lib, "winmm.lib")
@@ -57,7 +58,10 @@ void DoInitRoutine(const char * pcszNameBind, empty_init_Routine init_routine)
 void __fastcall InitRNGHooks()
 {
 	g_dwBaseTime = timeGetTime();
+	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&g_dwPerformanceCount));
+
 	*(unsigned long long*)(TIMEGETTIME_IAT_ADDRESS) = (unsigned long long)TimeGetTime_Hook;
+	*(unsigned long long*)(QPC_IAT_ADDRESS) = (unsigned long long)QueryPerformanceCounter_Hook;
 }
 
 void __fastcall InitFastForward()
@@ -107,7 +111,14 @@ bool __fastcall QueryPerformanceCounter_Hook(LARGE_INTEGER * pPerformanceCounter
 	if (!original_QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&curPerfCounter)))
 		return false;
 
-	auto newTime = curPerfCounter + ((curPerfCounter - g_dwPerformanceCount) * g_dwGameSpeed);
+	int64_t newTime = 0; 
+#ifdef FASTFORWARD_HOOK_TEST
+	newTime = curPerfCounter + ((curPerfCounter - g_dwPerformanceCount) * g_dwGameSpeed);
+#else 
+	// This will probably explode everything, but  /shrug
+	newTime = curPerfCounter + ((curPerfCounter - g_dwPerformanceCount) * 1000);
+#endif
+
 	*pPerformanceCounter = *reinterpret_cast<LARGE_INTEGER*>(&newTime);
 	
 	return true;
@@ -452,8 +463,18 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	g_llGameLoopRcx = ecx;
 	if (g_pPlaybackManager)
 	{
-		unsigned long long mpArea = *(unsigned long long*)(ecx + 0x401F0);
-		g_pPlaybackManager->m_bLoading = (bool*)(mpArea + 0x38);
+		auto pGameState = MTFramework::GetGameState();
+		if (pGameState)
+		{
+			//g_pPlaybackManager->m_bLoading = MTFramework::GetGameState();
+
+			if (!strcmpi(MTFramework::GetGameState()->m_szMenuState, "aBriefing"))
+				g_pPlaybackManager->m_bLoading = true;
+			else
+				g_pPlaybackManager->m_bLoading = false;
+
+		}
+
 	}
 
 
@@ -719,11 +740,13 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 #endif
 
 #ifdef RADICAL_ED
-	DoInitRoutine("RNG Hooks", InitRNGHooks);
+	//DoInitRoutine("RNG Hooks", InitRNGHooks);
 #endif
 
 
 	DoInitRoutine("Fix IAT rehook", _FixIATRehook);
+
+	DoInitRoutine("InitBossDecision Hooks", Boss::InitBossDecisionHooks);
 	//DoInitRoutine("FuckYourLimiter",_FuckYourLimiter());
 
 	g_pPlaybackManager = new PlaybackManager("megaman.rec");

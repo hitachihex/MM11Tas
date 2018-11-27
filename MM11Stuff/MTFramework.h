@@ -8,8 +8,10 @@ namespace MTFramework
 #pragma pack(push, 1)
 	typedef struct t_GameState
 	{
+		// 0x00 - 0x07
 		unsigned long long m_qwUnknown;
 
+		// 0x08 - 0x0B
 		char * m_szMenuState;
 
 	} GameState;
@@ -502,7 +504,6 @@ namespace MTFramework
 		// 0x30 - 0x43B7
 		unsigned char m_ucUnknown0030_043B7[0x43B8 - 0x30];
 
-		// Need a lea? then
 		// 0x43B8 - 0x????
 		CollisionManager m_CollManager;
 
