@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DebugUtils.h"
 
 // Make some sense, sensemaker!
 namespace MTFramework
@@ -273,19 +274,6 @@ namespace MTFramework
 
 	};
 
-	// We're just grasping at straws here for names now, lol.
-	class MTUnitDataBlock
-	{
-	public:
-		// 0x00 - 0x17
-		unsigned char m_cUnknown[0x18 - 0x0];
-
-		// 0x18 - 0x1F
-		MTUnitObject * m_pNext;
-	protected:
-	private:
-
-	};
 
 	// I've really no idea what it's name is.
 	class MTUnitObject
@@ -295,8 +283,14 @@ namespace MTFramework
 		// 0x00 - 0x07
 		unsigned long long *m_Vtable;
 
-		// 0x08 - 0x4F
-		unsigned char m_ucUnknown08_30[0x50 - 0x08];
+		// 0x08 - 0x17
+		unsigned char m_ucUnknown08_30[0x18 - 0x08];
+
+		// 0x18 - 0x1F   -- why is the next pointer before the data..?
+		MTUnitObject * m_pNext;
+
+		// 0x20 - 0x4F
+		unsigned char m_cUnknown20_4F[0x50 - 0x20];
 
 		// 0x50 - 0x53
 		float m_PositionX;
@@ -316,18 +310,53 @@ namespace MTFramework
 	{
 	public:
 		// 0x00 - 0x07
+		// vtable[0] 
+		virtual void _A() = 0;
 
-		//vtable[6]  - Dunno
-		//vtable[9]  - Does the meat of it
-		//vtable[10] - Does the meat of it
-		//vtable[11] - Dunno
-		//vtable[12] - Does the meat of it
-		//vtable[13] - Dunno
-		unsigned long long m_Vtable;
+		// vtable[1]
+		virtual void _B() = 0;
 
+		// vtable[2]
+		virtual void _C() = 0;
 
-		// 0x06 * 0x08 = 0x30
+		// vtable[3]
+		virtual void _D() = 0;
 
+		// vtable[4]
+		virtual void _E() = 0;
+
+		// vtable[5]
+		virtual void _F() = 0;
+
+		// vtable[6]
+		virtual void _G() = 0;
+
+		// vtable[7]
+		virtual void _H() = 0;
+
+		// vtable[8]
+		virtual void _I() = 0;
+
+		// vtable[9]
+		virtual void _J() = 0;
+
+		// vtable[10] 
+		virtual void _K() = 0;
+
+		// vtable[11]
+		virtual void _L() = 0;
+
+		// vtable[12]
+		virtual void _M() = 0;
+
+		// vtable[13]
+		virtual void _N() = 0;
+
+		// vtable[14]
+		virtual void _O() = 0;
+
+		// vtable[15] - Needs EDX as object indexer
+		virtual const char * GetUnitNameType() = 0;
 
 		// lea r8, qword ptr ds:[r9+r9*2],   - objCount=r8
 		// add r8, r8                        - objCount+=objCount
@@ -351,12 +380,13 @@ namespace MTFramework
 		// 0x08 - 0x4F
 		unsigned char m_ucUnknown08_4F[0x50 - 0x08];
 
-
-		// 0x50 - ?? 		// Idk, i think it ends here though
-		MTUnitDataBlock m_UnitDataBlock[0x100];
+		// 0x50 - 0x170		
+		MTUnitObject * m_UnitList[0x24];
 
 		static constexpr unsigned long long _UnitManagerPointer = 0x140C3EF58;
 		static constexpr unsigned int       NumObjectsToIterateOffset = 0xC38;
+		
+		static constexpr unsigned int       PLAYER_UNIT_INDEX = 0x08;
 
 
 		// lol I don't even know what's going on anymore, Memory.jpg
@@ -380,9 +410,6 @@ namespace MTFramework
 
 		}
 
-		/* Not really sure what the shit this code is doing right now.
-		   Gonna backburn it for now.
-
 		__declspec(noinline) MTUnitObject * GetObjectAtIndex(unsigned int i)
 		{
 			MTUnitArray * pUnitArray = (MTUnitArray*)(*(unsigned long long*)(_UnitManagerPointer));
@@ -394,22 +421,30 @@ namespace MTFramework
 				return nullptr;
 			
 
-			// Sure, yup. I don't care about whatever hash is going on here.
-			// Just do what it does and it works.
-			MTUnitObject * pReturn = nullptr;
+			// Sure, yup. I don't care about whatever implementation is going on here.
+			// Just do what it does and it works
+			// NOTE: Main thread CSLocks this
+
+			// given the maximum indexer the game uses it would be : (32)+(32*2) + (32)+(32*2)
+			//                                                           96      +     96     
+			return this->m_UnitList[(i)+(i * 2) + (i)+(i * 2)];
 
 
-			unsigned int temp = (i)+(i * 2);
-			temp += temp;
-			temp = temp * 0x08;
-			MTUnitDataBlock *p = &this->m_UnitDataBlock[temp];
-
-			for (MTUnitObject *pObject = p->m_pNext; pObject; pObject = p->m_pNext)
+			/*
+			// Child update - linked list to update each child object per m_pUnit->Update() call
+			unsigned int count = 0;
+			for (MTUnitObject *p = this->m_UnitList[temp]; p; p = p->m_pNext)
 			{
+				count++;
+				//p->Update() (@ vtable[0x48/0x08]
 			}
 
-			return pReturn;
-		}*/
+			// compiler is doing something pointless, this is unused in the getUnitTypeName call
+			// mov rax, qword ptr ds:[this]
+			// movsx ebp, byte ptr ds:[this+r8*8+0x48]
+			// bpl &= 0x01
+			return pReturn;*/
+		}
 
 	protected:
 	private:

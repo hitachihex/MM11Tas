@@ -418,48 +418,6 @@ static void ChangeGameSpeed(float f, bool reset = false)
 
 	*g_fGlobalGameSpeed += (f);
 #endif
-
-
-	/*
-	if (reset)
-	{
-		*pfTimeStep = 3.0f;
-		return;
-	}*/
-
-	//float *pfEngineUpdateRate = (float*)(rcx + 0x80);
-	//*pfEngineUpdateRate += (f);
-
-	// So what if we only change the timestep??
-	//*pfTimeStep += (f * 3.0f);
-	/*
-	float *pTest = (float*)(rcx + 0x80);
-
-	// Ok this.. is zoom, or something. Lol
-	float *pZoom_Q = (float*)(0x00000001409BE564);
-
-	// The engine timestep!
-	float *pTest2 = (float*)(0x1409C3A34);
-
-	if (reset) {
-		//*pZoom_Q = 1.0f;
-		*pTest = 1.0f;
-		*pTest2 = 3.0f;
-		*g_fGlobalGameSpeed = 1.0;
-		return;
-	}
-
-
-	// Just do multiples of 3??
-	//*pTest2 += (f * 3.0f);
-	//*pZoom_Q += (f);
-	*pTest += (f);
-	*g_fGlobalGameSpeed += (f);
-	// so.. change teh fps to 120??
-	float *pFps = (float*)(rcx + 0x50);
-	*pFps = 120.0;*/
-
-
 }
 
 // Sure hope I don't run into any race conditions doing this..
@@ -552,13 +510,10 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 		auto pGameState = MTFramework::GetGameState();
 		if (pGameState)
 		{
-			//g_pPlaybackManager->m_bLoading = MTFramework::GetGameState();
-
 			if (!strcmpi(MTFramework::GetGameState()->m_szMenuState, "aBriefing"))
 				g_pPlaybackManager->m_bLoading = true;
 			else
 				g_pPlaybackManager->m_bLoading = false;
-
 		}
 
 	}
@@ -594,6 +549,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 #ifdef RADICAL_ED
 	if (GetAsyncKeyState(VK_F6) & 1)
 	{
+
 		/*
 		auto pGameState = MTFramework::GetGameState();
 		if (pGameState)
