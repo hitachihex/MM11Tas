@@ -6,6 +6,7 @@
 #include <timeapi.h>
 #include "BossDecisionInit.h"
 #include "RNGHooks.h"
+#include "Rockman.h"
 
 
 #pragma comment(lib, "winmm.lib")
@@ -472,7 +473,17 @@ void ThreadProc()
 
 		if (_this != nullptr)
 		{
-			
+			if (GetAsyncKeyState(VK_F7) & 1)
+			{
+				auto pRockman = Game::GetRockManArmSystemPtr();
+
+				if (pRockman)
+				{
+					pRockman->GiveMaxAmmo(Game::ARM_IMPACT);
+					pRockman->GiveMaxAmmo(Game::ARM_FUSE);
+					pRockman->GiveMaxAmmo(Game::ARM_BLOCK);
+				}
+			}
 			// If middle mouse is held down
 			if (GetAsyncKeyState(VK_MBUTTON) & 0x8000)
 			{
@@ -552,7 +563,6 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 
 	}
 
-
 	if (GetAsyncKeyState(VK_F1) & 1 && !g_bPaused)
 	{
 		// Don't let original update get called on the frame we pressed the bind.
@@ -582,7 +592,7 @@ void __fastcall GameLoop_Hook(unsigned long long ecx, unsigned long long edx)
 	}
 
 #ifdef RADICAL_ED
-	if (GetAsyncKeyState(VK_F5) & 1)
+	if (GetAsyncKeyState(VK_F6) & 1)
 	{
 		/*
 		auto pGameState = MTFramework::GetGameState();

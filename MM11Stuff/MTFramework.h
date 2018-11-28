@@ -273,16 +273,39 @@ namespace MTFramework
 
 	};
 
+	// We're just grasping at straws here for names now, lol.
+	class MTUnitDataBlock
+	{
+	public:
+		// 0x00 - 0x17
+		unsigned char m_cUnknown[0x18 - 0x0];
+
+		// 0x18 - 0x1F
+		MTUnitObject * m_pNext;
+	protected:
+	private:
+
+	};
+
 	// I've really no idea what it's name is.
 	class MTUnitObject
 	{
 	public:
 
 		// 0x00 - 0x07
-		unsigned long long m_Vtable;
+		unsigned long long *m_Vtable;
 
-		// 0x08 - 0x30
-		unsigned char m_ucUnknown08_30[0x30 - 0x08];
+		// 0x08 - 0x4F
+		unsigned char m_ucUnknown08_30[0x50 - 0x08];
+
+		// 0x50 - 0x53
+		float m_PositionX;
+
+		// 0x54 - 0x57
+		float m_PositionY;
+
+		// 0x58 - 0x5F
+		float m_PositionZ;
 
 	protected:
 	private:
@@ -328,11 +351,65 @@ namespace MTFramework
 		// 0x08 - 0x4F
 		unsigned char m_ucUnknown08_4F[0x50 - 0x08];
 
-		// 0x50 - ??
-		MTUnitObject * m_pObjects;
+
+		// 0x50 - ?? 		// Idk, i think it ends here though
+		MTUnitDataBlock m_UnitDataBlock[0x100];
 
 		static constexpr unsigned long long _UnitManagerPointer = 0x140C3EF58;
 		static constexpr unsigned int       NumObjectsToIterateOffset = 0xC38;
+
+
+		// lol I don't even know what's going on anymore, Memory.jpg
+		typedef struct t_MTUnitArray
+		{
+			// 0x000 - 0xC37
+			unsigned char m_ucUnknown[0xC38 - 0x0];
+
+			// 0xC38 - 0xC3B
+			unsigned long m_UnitsToUpdate;
+		} MTUnitArray;
+
+		unsigned long GetUnitUpdateCount()
+		{
+			MTUnitArray * pUnitArray = (MTUnitArray*)(*(unsigned long long*)(_UnitManagerPointer));
+
+			if (!pUnitArray)
+				return -1;
+
+			return pUnitArray->m_UnitsToUpdate;
+
+		}
+
+		/* Not really sure what the shit this code is doing right now.
+		   Gonna backburn it for now.
+
+		__declspec(noinline) MTUnitObject * GetObjectAtIndex(unsigned int i)
+		{
+			MTUnitArray * pUnitArray = (MTUnitArray*)(*(unsigned long long*)(_UnitManagerPointer));
+
+			if (!pUnitArray)
+				return nullptr;
+
+			if (i >= pUnitArray->m_UnitsToUpdate)
+				return nullptr;
+			
+
+			// Sure, yup. I don't care about whatever hash is going on here.
+			// Just do what it does and it works.
+			MTUnitObject * pReturn = nullptr;
+
+
+			unsigned int temp = (i)+(i * 2);
+			temp += temp;
+			temp = temp * 0x08;
+			MTUnitDataBlock *p = &this->m_UnitDataBlock[temp];
+
+			for (MTUnitObject *pObject = p->m_pNext; pObject; pObject = p->m_pNext)
+			{
+			}
+
+			return pReturn;
+		}*/
 
 	protected:
 	private:
