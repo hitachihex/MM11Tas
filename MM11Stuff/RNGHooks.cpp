@@ -80,20 +80,26 @@ namespace RNG
 #endif
 		if (g_pPlaybackManager && g_pPlaybackManager->IsPlayingBack() && !g_pPlaybackManager->m_bLoading)
 		{
-			// Take current frame.
-			pAtv->A = g_pPlaybackManager->m_CurrentFrame; 
+			// Just use a seed. Mumbo jump w/ input state maybe revisit that later.
+			pAtv->A = (g_pPlaybackManager->m_CurrentFrame + g_pPlaybackManager->GetCurrentSeed());
+			pAtv->B = (g_pPlaybackManager->m_CurrentFrame + g_pPlaybackManager->GetCurrentSeed());
+			pAtv->C = (g_pPlaybackManager->m_CurrentFrame + g_pPlaybackManager->GetCurrentSeed());
+			pAtv->D = (g_pPlaybackManager->m_CurrentFrame + g_pPlaybackManager->GetCurrentSeed());
 
-			unsigned short MSB = (unsigned short)((unsigned int)g_pPlaybackManager->GetCurrentInput()->m_InputState & 0x00FF);
-			unsigned short LSB = (unsigned short)((unsigned int)g_pPlaybackManager->GetCurrentInput()->m_InputState & 0xFF00);
+			// Take current frame.
+			//pAtv->A = g_pPlaybackManager->m_CurrentFrame; 
+
+			//unsigned short MSB = (unsigned short)((unsigned int)g_pPlaybackManager->GetCurrentInput()->m_InputState & 0x00FF);
+			//unsigned short LSB = (unsigned short)((unsigned int)g_pPlaybackManager->GetCurrentInput()->m_InputState & 0xFF00);
 
 			// Take current frame + MSB
-			pAtv->B = (g_pPlaybackManager->m_CurrentFrame + MSB);
+			//pAtv->B = (g_pPlaybackManager->m_CurrentFrame + MSB);
 			
 			// Take current frame + LSB
-			pAtv->C = (g_pPlaybackManager->m_CurrentFrame + LSB);
+			//pAtv->C = (g_pPlaybackManager->m_CurrentFrame + LSB);
 
 			// Take current frame + the whole input records current state as an integer.
-			pAtv->D = (g_pPlaybackManager->m_CurrentFrame + (unsigned long)g_pPlaybackManager->GetCurrentInput()->m_InputState);
+			//pAtv->D = (g_pPlaybackManager->m_CurrentFrame + (unsigned long)g_pPlaybackManager->GetCurrentInput()->m_InputState);
 		}
 
 		return ((unsigned long(__fastcall*)(ActionTimeValues*))g_OriginalShiftRNG)(pAtv);

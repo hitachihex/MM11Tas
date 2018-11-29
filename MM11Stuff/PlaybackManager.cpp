@@ -122,6 +122,8 @@ XINPUT_STATE * PlaybackManager::GetXInputState()
 #pragma warning(disable : 4996)
 PlaybackManager::PlaybackManager(const char *pcszFileName)
 {
+	this->m_nCurrentSeed = 1337;
+
 	this->m_bLoading = false;;
 
 	// ADDED - Init break state
@@ -477,6 +479,10 @@ unsigned long PlaybackManager::GetCurrentInputIndex()
 	return this->m_InputIndex;
 }
 
+unsigned long PlaybackManager::GetCurrentSeed()
+{
+	return this->m_nCurrentSeed;
+}
 
 // shut up c4996
 #pragma warning(disable : 4996)
@@ -543,6 +549,11 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 
 			this->m_pCurrentInput = this->m_Inputs[++this->m_InputIndex];
 
+			if (this->m_pCurrentInput->m_Seed != -1)
+			{
+				DebugOutput("Set seed to %08X", this->m_pCurrentInput->m_Seed);
+				this->m_nCurrentSeed = this->m_pCurrentInput->m_Seed;
+			}
 			// RNG, other stuff here, etc
 
 

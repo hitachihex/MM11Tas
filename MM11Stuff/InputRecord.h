@@ -44,6 +44,8 @@ typedef struct t_InputRecord
 
 	int m_Done;
 
+	unsigned long  m_Seed;
+
 	unsigned long long m_nLineNo;
 
 	// For multi-level input files.
@@ -275,6 +277,9 @@ typedef struct t_InputRecord
 #pragma warning(disable: 4996)
 	t_InputRecord(std::string line, unsigned int ln, const char*filename, unsigned int otherln)
 	{
+		// Default this.
+		this->m_Seed = -1;
+
 		// fiddy six
 		strncpy(this->m_szFromFile, filename, sizeof(this->m_szFromFile) / sizeof(this->m_szFromFile[0]));
 
@@ -444,6 +449,17 @@ typedef struct t_InputRecord
 				{
 					TempState |= (EInputState::JUMP | EInputState::DOWN);
 					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "SEED")
+				{
+
+				    if((i+1) < tokens.size())
+						this->m_Seed = std::stoul(tokens[i + 1]);
+					else
+					{
+						DebugOutput("Seed is missing numeric value?");
+					}
 					continue;
 				}
 

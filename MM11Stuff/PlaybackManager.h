@@ -56,6 +56,8 @@ public:
 
 	void DoPlayback(bool, XINPUT_STATE*);
 
+	unsigned long GetCurrentSeed();
+
 	XINPUT_STATE * GetXInputState();
 
 	std::string m_CWD;
@@ -80,6 +82,8 @@ protected:
 private:
 
 	const char * m_szDefaultFileName = "megaman.rec";
+
+	unsigned long m_nCurrentSeed;
 
 	std::vector<InputRecord*> m_Inputs;
 
