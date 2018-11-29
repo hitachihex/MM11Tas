@@ -278,6 +278,9 @@ typedef struct t_InputRecord
 		// fiddy six
 		strncpy(this->m_szFromFile, filename, sizeof(this->m_szFromFile) / sizeof(this->m_szFromFile[0]));
 
+		// This needs to be defaulted!
+		this->m_bMultiLevelFile = false;
+
 		// if(filename != megaman.rec)
 		if (strcmpi(filename, "megaman.rec"))
 		{
