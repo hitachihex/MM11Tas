@@ -30,7 +30,9 @@ enum EInputState
 	POWER_GEAR   = 1<<11,
 	START        = 1<<12,
 	SELECT       = 1<<13,
-	BUSTER       = 1<<14
+	BUSTER       = 1<<14,
+	RTRIG        = 1<<15,
+	LTRIG        = 1<<16
 };
 
 //const static unsigned int eDashState = EInputState::DOWN | EInputState::JUMP;
@@ -180,6 +182,14 @@ typedef struct t_InputRecord
 		if (this->IsBuster())
 			pad->wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
 
+		// Set them to max.
+		if (this->IsRTrigger())
+			pad->bRightTrigger = 255;
+
+		// Set them to max.
+		if (this->IsLTrigger())
+			pad->bLeftTrigger = 255;
+
 		if (this->IsWeaponSelect())
 		{
 			// Set tRx and tRy
@@ -261,6 +271,17 @@ typedef struct t_InputRecord
 	bool IsBuster()
 	{
 		return this->HasFlag(this->m_InputState, EInputState::BUSTER);
+	}
+
+	bool IsRTrigger()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::RTRIG);
+	}
+
+
+	bool IsLTrigger()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::LTRIG);
 	}
 
 	bool IsEmpty()
@@ -451,9 +472,22 @@ typedef struct t_InputRecord
 					bWasValidToken = true;
 					continue;
 				}
+				else if (token == "RTRIG")
+				{
+				    TempState |= EInputState::RTRIG;
+					bWasValidToken = true;
+				    continue;
+				}
+				else if (token == "LTRIG")
+				{
+				    TempState |= EInputState::LTRIG;
+					bWasValidToken = true;
+				    continue;
+				}
 				else if (token == "SEED")
 				{
-
+				
+				    bWasValidToken = true;
 				    if((i+1) < tokens.size())
 						this->m_Seed = std::stoul(tokens[i + 1]);
 					else

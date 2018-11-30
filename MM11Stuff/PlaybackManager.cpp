@@ -403,6 +403,7 @@ void PlaybackManager::InitPlayback(bool bReload = true)
 	this->m_RuntoLineNo = -1;
 	this->m_WalktoLineNo = -1;
 	this->m_nTotalFrameCount = 0;
+	this->m_BreakState.m_nLineNo = -1;
 
 	if (this->m_bPlayingBack && bReload)
 	{
