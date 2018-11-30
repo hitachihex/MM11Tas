@@ -567,7 +567,8 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, XINPUT_STATE*pxInpState)
 					
 					if (this->m_pCurrentInput->m_bMultiLevelFile &&
 						!strcmpi(this->m_pCurrentInput->m_szFromFile, this->m_BreakState.m_szCurrentFile) &&
-						this->m_BreakState.m_nLineNo == this->m_pCurrentInput->m_nInternalLineNo)
+						// need to subtract main files line number? why
+						((this->m_BreakState.m_nLineNo - this->m_pCurrentInput->m_nLineNo) == this->m_pCurrentInput->m_nInternalLineNo))
 					{
 						this->m_BreakState.m_nLineNo = -1;
 						g_bPaused = true;
