@@ -440,6 +440,8 @@ void ThreadProc()
 					pRockman->GiveMaxAmmo(Game::ARM_IMPACT);
 					pRockman->GiveMaxAmmo(Game::ARM_FUSE);
 					pRockman->GiveMaxAmmo(Game::ARM_BLOCK);
+
+					pRockman->GiveMaxRushSharedAmmo();
 				}
 			}
 			// If middle mouse is held down

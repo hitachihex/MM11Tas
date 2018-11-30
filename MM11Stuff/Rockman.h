@@ -36,6 +36,12 @@ namespace Game
 			}
 		}
 
+		void GiveMaxRushSharedAmmo()
+		{
+			*(unsigned long*)((unsigned long)this + 0x49C) = 56;
+			*(unsigned long*)((unsigned long)this + 0x4A0) = 56;
+		}
+
 	protected:
 	private:
 
