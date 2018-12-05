@@ -1,0 +1,44 @@
+#Start Buy Menu
+1,PGear
+12
+1,Jump
+1
+#start buy wtank
+1,Right
+1
+1,Right
+1
+1,Jump
+2
+1,Jump
+1
+1,Left
+1,Jump
+#finished 1 wtank
+#wait for animations
+31
+#start to buy 2 tank
+1,Jump
+2
+1,Jump
+2
+1,Jump
+2
+1,Jump
+1
+1,Left
+1,Jump
+#finished 2 wtank
+#wait for animations
+31
+#start to buy 3 tank
+1,Jump
+2
+1,Jump
+2
+1,Jump
+2
+1,Jump
+1
+1,Left
+1,Jump

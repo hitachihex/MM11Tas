@@ -1,0 +1,73 @@
+#impact stage stuff
+#Checkpoint 1 start
+#^^ end of screen 5
+#transition to screen 6
+22,Right,Shoot
+1,Slide,Right,Shoot
+22,Right,Shoot
+1,Slide,Right,Shoot
+19,Right,Shoot
+4,Jump,Right,Shoot
+6,Right,Shoot
+1,Slide,Right,Shoot
+13,Right,Shoot
+#^^ end of screen 6
+#transition to screen 7
+47
+
+
+#Checkpoint 2 start
+10,Right
+1,Slide,Right
+28,Right
+1,Slide,Right
+8,Right,Shoot
+20,Jump,Right,Shoot
+8,Right,Shoot
+13,Right,Up,Shoot
+1,Slide,Right,Shoot
+8,Right,Shoot
+#^^ end of screen 13
+#transition to screen 14
+
+##This is 4 frames faster but requires 1 small ammo drop to not lose time later
+#transition to screen 9
+57
+10,Right
+1,Slide,Right
+21,Right,Shoot
+7,Jump,Right,Shoot
+17,Right,Shoot
+1,Slide,Right,Shoot
+23,Right,Shoot
+1,Slide,Right,Shoot
+6,Right,Shoot
+4,Jump,Right,Shoot
+6,Right,Shoot
+1,Slide,Right,Shoot
+18,Right,Shoot
+4,Shoot
+1,Shoot,RCoil
+24,Shoot
+15,Left
+1,Slide,Left
+30,Left
+1,Left,Shoot
+3,Left
+#KILL WELDY
+1,Left,Shoot
+1,Slide,Left
+22,Left
+1,Slide,Left
+6,Left
+1,Jump,Left
+17,Left
+1,Slide,Left
+9,Left
+9,Jump,Left
+6,Left
+1,Slide,Left
+24,Left
+1,Slide,Left
+7,Left
+#^^ end of screen 9
