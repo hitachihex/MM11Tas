@@ -63,7 +63,7 @@ typedef struct t_InputRecord
 		{"Blast", std::make_pair(1* 32767, 1* 32767)},
 		{"Fuse",  std::make_pair(-1* 32768, 0)},
 	    {"Bounce", std::make_pair(1* 32767, 0)},
-	    {"Torch", std::make_pair(-1* 32768, -1* 32768)},
+	    {"Torch", std::make_pair(-1* 25000, -1* 32768)},
 	    {"Impact", std::make_pair(0, -1* 32768)},
 	    {"Tundra", std::make_pair(1* 32767, -1* 32768)}
 	};

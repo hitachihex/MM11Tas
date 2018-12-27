@@ -26,6 +26,7 @@ unsigned long WINAPI XInputGetState_Hook(unsigned long dwUserIndex, XINPUT_STATE
 
 	auto * p = &pInputState->Gamepad;
 
+
 	if (g_pPlaybackManager)
 	{
 		if (g_pPlaybackManager->IsPlayingBack() && g_bPlaybackSync)
