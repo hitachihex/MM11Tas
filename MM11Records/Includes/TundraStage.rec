@@ -1,6 +1,5 @@
 #start Tundra
-#1,Jump
-#345
+1,Right
 1,Right,Slide
 22,Right
 1,Right,Slide
@@ -54,50 +53,49 @@
 1,Slide,Right
 22,Right
 1,Jump,Right
-30,Right
-11
+41,Right
 1,Slide,Right
 22,Right
 1,Slide,Right
-7,Right
 1,Right,SGear
 1,Right,PGear
 2,Right
 1,Right,PGear
+7,Right
 10,Right
 1,Slide,Right
-6,Right
+4,Right
 #^^ end of screen 2
 #transition to screen 3
-51
-13,Right
-1,Slide,Right
-10,Right
-1,Right,RCoil
-11
-1,Jump,Right
-10
-10,Right
-27,Left
-14,Jump,Left
-1,Jump,Up
-18,Up
+51,Shoot
+15,Right,Shoot
+1,Slide,Right,Shoot
+8,Right,Shoot
+1,Right,RCoil,Shoot
+11,Shoot
+1,Jump,Right,Shoot
+10,Shoot
+10,Right,Shoot
+39,Left,Shoot
+1,Left,RCoil,Shoot
+1,Left,Shoot
+1,Jump,Left,Shoot
+20,Left,Shoot
+1,Up,Shoot
 #^^ end of screen 3
 #transition to screen 4
 58,Shoot
-186,Up,Shoot
-6,Right
-1,Slide,Right
-20,Right
-1,Right,Shoot
-6,Right
+169,Up,Shoot
+1,Right,Up
 1,Slide,Right
 22,Right
 1,Slide,Right
 22,Right
 1,Slide,Right
-9,Right
-21,Left
+22,Right
+1,Slide,Right
+12,Right
+23,Left
 1,WSelect,Impact,PGear,Left
 1,Left,Shoot
 1,Left
@@ -125,7 +123,7 @@
 1,Slide,Right
 22,Right
 1,Slide,Right
-8,Right
+6,Right
 2,Jump,Right
 14,Jump,Left
 3,Left
@@ -142,23 +140,23 @@
 20,Jump,Left,Up
 10,Up,Left
 1,Slide,Left
-5,Left
+4,Left
 1,Left,RCoil
-1,Jump,Left
-3,Left
-1,Up
-1,Jump
 2,Left
-2,Right
-11
+2,Jump,Left
+1,Jump
+2,Up
+1,Jump
+12
+1,Right
 1,Up
 #^^ end of screen 5
 #transition to screen 6
-57,Shoot
-135,Up,Shoot
-5,Right
+57,Up,Shoot
+130,Up,Shoot
+1,Up,Right
 1,Slide,Right
-31,Right
+32,Right
 1,Slide,Right
 15,Right
 1,Right,Shoot
@@ -166,8 +164,8 @@
 1,Slide,Right
 24,Right
 1,Slide,Right
-20,Right
-9,Jump,Right
+21,Right
+10,Jump,Right
 8,Right
 1,Slide,Right
 14,Right
@@ -177,7 +175,7 @@
 15,Right
 1,Slide,Right
 #First Big Jump
-12,Right
+13,Right
 20,Jump,Right
 16,Right
 12,Jump,Right
@@ -208,13 +206,21 @@
 7,Jump,Right
 15,Right
 1,Slide,Right
-37,Right
+12,Right
+10,Jump,Right
+1,Jump,Right,PGear
+1,Jump,Right,Shoot
+1,Jump,Right
+1,Right,PGear
+11,Right
 1,Slide,Right
-22,Right
+7,Right
+7,Jump,Right
+18,Right
 1,Slide,Right
-22,Right
-1,Slide,Right
+16,Right
 8,Right
+27,Right
 13,Left
 #^^ end of screen 6
 #transition to screen 7
@@ -240,29 +246,30 @@
 1,Slide,Right,Shoot
 3,Right,Shoot
 12,Jump,Right
-19,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-6,Right
+19,Right,Shoot
+1,Slide,Right,Shoot
+22,Right,Shoot
+1,Slide,Right,Shoot
+22,Right,Shoot
+1,Slide,Right,Shoot
+6,Right,Shoot
 #^^ end of screen 8
 #transition to screen 9
-51
-3,Right
-1,Right,RCoil
-8,Right
-2,Jump,Left
-3,Left
-15
-5,Right
-16
-65,Up
+51,Shoot
+3,Right,Shoot
+1,Right,RCoil,Shoot
+8,Right,Shoot
+2,Jump,Left,Shoot
+3,Left,Shoot
+15,Shoot
+5,Right,Shoot
+16,Shoot
+65,Up,Shoot
 #^^ end of screen 9
 #transition to screen 10
-58
-35,Up
+58,Up,Shoot
+32,Up,Shoot
+1,Up,Right
 1,Slide,Right
 22,Right
 1,Slide,Right
@@ -278,32 +285,24 @@
 1,Right,Shoot
 1,Slide,Right
 22,Right
+1,Slide,Right
+22,Right
+1,Slide,Right
+22,Right
+1,Slide,Right
+22,Right
+1,Slide,Right
+22,Right
+1,Slide,Right
+22,Right
+1,Slide,Right
+22,Right
+1,Slide,Right
+5,Right
+16,Jump,Right
+5,Right
 1,Slide,Right
 9,Right
-1,Jump,Right,Shoot
-3,Right
-1,Right,Shoot
-3,Right
-1,Right,Shoot
-3,Right
-1,Right,Shoot
-2,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-10,Right
-16,Jump,Right
-3,Right
-1,Slide,Right
-10,Right
 8,Jump,Right
 23,Right
 1,Slide,Right
@@ -337,22 +336,29 @@
 22,Left
 1,Slide,Left
 9,Left
-20,Right
+20,Left
 #^^ end of screen 11
 #transition to screen 12
 56
-21,Right
-1,Right,WSelect,Impact,PGear
+21,Left
+13,Left
+1,Slide,Left,WSelect,Impact
+13,Left
+1,Jump
 1,Right,Shoot
-1,Right
-1,Right,PGear
-26,Right
-1,Slide,Right,Buster
-4,Right
+30,Right,Shoot
+1,Slide,Right,Shoot
+22,Right,Shoot,Buster
+1,Slide,Right,Shoot
+9,Right,Shoot
+16,Right,Jump,Shoot
+5,Right,Shoot
+1,Slide,Right,Shoot
+10,Right,Shoot
 #^^ end of screen 12
 ##Miniboss door
 #transition to screen 13
-139,Shoot
+133,Shoot
 1,Slide,Right,Shoot
 52,Right,Shoot
 20,Right
@@ -698,7 +704,9 @@
 1,Slide,Right
 22,Right
 1,Slide,Right
-8,Right
+7,Right
+1,Right
+#1,Right,WSelect,Impact,PGear
 #^^ end of screen 22
 #transition to screen 23 (hallway)
 130,Right
@@ -716,12 +724,11 @@
 #transition to screen 24 (boss)
 373
 #Boss starts to gain life
-220
+219,Shoot,Right,PGear
 1,Right,Shoot
-1,PGear,Right,Shoot
-60,Right,Shoot
+39,Right,Shoot
 1,PGear
-31,Left
+29,Left
 1,PGear,Shoot,Left
 41,Shoot
 1,Right,Shoot
@@ -729,6 +736,7 @@
 13,Jump,Shoot,Right
 2,Right,Shoot
 11,Left,Shoot
+2,Shoot
 1,PGear
 42,Right
 1,Slide,Right
@@ -749,13 +757,13 @@
 1,Jump,Shoot
 30,Shoot
 1
-
-
-
-
-
-
-
-
+#Boss dead
+1170
+1,Start
+120
+1,Start
+100
+1,Start
+200
 
 

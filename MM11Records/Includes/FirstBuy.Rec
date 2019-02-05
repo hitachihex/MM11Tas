@@ -31,14 +31,32 @@
 #finished 2 wtank
 #wait for animations
 31
-#start to buy 3 tank
+#tell em to shuttup
 1,Jump
-2
-1,Jump
-2
+#move to other page
+1
+1,RTRIG
+20
+1,Right
+1,Down
+1,Right
 1,Jump
 2
 1,Jump
 1
 1,Left
 1,Jump
+1
+1,Jump
+29
+1,Jump
+23
+1,Jump
+35
+1,SGear
+#wait to get back to stage select
+8
+#select Torch man
+1,Right
+1,Jump
+
