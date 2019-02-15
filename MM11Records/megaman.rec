@@ -30,6 +30,13 @@ Read,FirstBuy.rec
 345
 #First active frame
 Read,TorchStage.rec
+#Select Blast
+1,Down
+1,Left
+1,Jump
+345
+#First active frame
+Read,BlastStage.rec
 
 
 
