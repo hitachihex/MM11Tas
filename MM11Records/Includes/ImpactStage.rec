@@ -1172,10 +1172,12 @@
 32,Shoot
 1
 #Boss dead
-1180
+1170
 1,Start
 120
 1,Start
 100
 1,Start
+80
+#end stage select fade out
 
