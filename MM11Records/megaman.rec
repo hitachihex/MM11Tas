@@ -1,47 +1,40 @@
 1
-Read,TundraStage.rec
-20,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-19,Right
-#^^ end of screen 23
-#transition to screen 24 (boss)
-373
-#Boss starts to gain life
-220
-1,Right,Shoot
-1,PGear,Right,Shoot
-60,Right,Shoot
-1,PGear
-31,Left
-1,PGear,Shoot,Left
-41,Shoot
-1,Right,Shoot
-1,Jump,Shoot,Right
-13,Jump,Shoot,Right
-2,Right,Shoot
-11,Left,Shoot
-1,PGear
-42,Right
-1,Slide,Right
-22,Right
-1,Slide,Right
-7,Right
+#Start new game to impact selection
+1,Start
+# Waiting to skip intro >= 83
+88
+1,Start
+# dsync >= 78
+78
 1,Right,Jump
-25
-20,Shoot,PGear
-10,Shoot
-15,Right,Shoot
-11,Shoot
-8,Right,Shoot
-1
-10,Shoot
-55,Shoot,Right
-5,Shoot
-1,Jump,Shoot
-30,Shoot
-1
+112
+1,Right,Jump
+# dsync >= 113
+116
+1,Right
+1,Up
+1,Jump
+345
+#First active frame
+Read,ImpactStage.rec
+#Select Tundra
+1,Right
+1,Jump
+345
+#First active frame
+Read,TundraStage.rec
+Read,FirstBuy.rec
+#Select Torch
+1,Right
+1,Jump
+345
+#First active frame
+Read,TorchStage.rec
+
+
+
+
+
 
 
 
