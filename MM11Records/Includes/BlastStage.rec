@@ -1,6 +1,5 @@
 #Blast Man
 #6648 frame count total
-1
 1,Right,Slide
 22,Right
 1,Right,Slide
@@ -602,3 +601,12 @@
 5
 1,SGear
 100
+#Boss dead
+1170
+1,Start
+120
+1,Start
+100
+1,Start
+80
+#end stage select fade out
